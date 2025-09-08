@@ -2,22 +2,28 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class SideScrollerNoJump : MonoBehaviour
+public class PlatformerController2D : MonoBehaviour
 {
-    [SerializeField] float moveSpeed = 5f;
+    [SerializeField] float defaultMoveSpeed = 5f;
+    public float MoveSpeed { get; set; }
+
     Rigidbody2D rb;
     float moveX;
 
-    void Awake() => rb = GetComponent<Rigidbody2D>();
-
-    public void OnMove(InputAction.CallbackContext ctx)
+    void Awake()
     {
-        var v = ctx.ReadValue<Vector2>();
+        rb = GetComponent<Rigidbody2D>();
+        MoveSpeed = defaultMoveSpeed;
+    }
+
+    public void OnMove(InputValue value)
+    {
+        Vector2 v = value.Get<Vector2>();
         moveX = v.x;
     }
 
     void FixedUpdate()
     {
-        rb.linearVelocity = new Vector2(moveX * moveSpeed, rb.linearVelocity.y);
+        rb.linearVelocity = new Vector2(moveX * MoveSpeed, rb.linearVelocity.y);
     }
 }
