@@ -1326,6 +1326,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5080430785509817182, guid: 506d7001900c4e545bed569f90108b60, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3092890820422014300}
+    - targetCorrespondingSourceObject: {fileID: 5080430785509817182, guid: 506d7001900c4e545bed569f90108b60, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5502232122286010624}
   m_SourcePrefab: {fileID: 100100000, guid: 506d7001900c4e545bed569f90108b60, type: 3}
 --- !u!114 &3205441454519766137 stripped
 MonoBehaviour:
@@ -1366,3 +1369,15 @@ MonoBehaviour:
   foodUnits: 5
   aerolgaeSeedRef: {fileID: 11400000, guid: c2c4387af3fb9304ba1aed476414641d, type: 2}
   carrotSeedRef: {fileID: 11400000, guid: a9f3bd4096dd37b4494385e5dd714da7, type: 2}
+--- !u!114 &5502232122286010624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3626912418178576066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c41293b347b919a4cb615f3b393f2314, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

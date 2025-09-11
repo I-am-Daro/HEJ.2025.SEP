@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
 public class GameData : MonoBehaviour
@@ -12,18 +12,20 @@ public class GameData : MonoBehaviour
         public string plantDefId;
         public PlantStage stage;
         public int daysLeftInStage;
-        public int lastWateredDay = int.MinValue; // melyik napon lett utoljára locsolva
+        public int lastWateredDay = int.MinValue; // melyik napon Ã¶ntÃ¶ztÃ©k utoljÃ¡ra (mÃ©g soha = MinValue)
     }
 
     // greenhouseId -> (bedId -> BedSave)
     Dictionary<string, Dictionary<string, BedSave>> beds =
         new Dictionary<string, Dictionary<string, BedSave>>();
 
-    [Header("Plant registry (töltsd ki a PlantDefinition SO-kat)")]
+    [Header("Plant registry (tÃ¶ltsd ki a PlantDefinition SO-kat)")]
     public PlantDefinition[] plantRegistry;
 
     Dictionary<string, PlantDefinition> reg;
 
+    // nap tÃ¼kÃ¶r (Greenhouse scene-ben is legyen "ma")
+    public int CurrentDayMirror { get; private set; } = 0;
     bool subscribedToDay = false;
 
     void Awake()
@@ -38,57 +40,12 @@ public class GameData : MonoBehaviour
                 if (p && !string.IsNullOrEmpty(p.id))
                     reg[p.id] = p;
 
-        TrySubscribeDay();   // <-- elsõ próbálkozás
+        TrySubscribeDay();
     }
 
     void Update()
     {
-        // ha az Awake-kor még nem volt DayNightSystem, itt pótoljuk a feliratkozást
         if (!subscribedToDay) TrySubscribeDay();
-    }
-
-
-    PlantDefinition DefById(string id)
-        => (id != null && reg != null && reg.TryGetValue(id, out var d)) ? d : null;
-
-    public BedSave GetOrCreateBed(string greenhouseId, string bedId)
-    {
-        if (string.IsNullOrEmpty(greenhouseId) || string.IsNullOrEmpty(bedId)) return null;
-
-        if (!beds.TryGetValue(greenhouseId, out var dict))
-        {
-            dict = new Dictionary<string, BedSave>();
-            beds[greenhouseId] = dict;
-        }
-
-        if (!dict.TryGetValue(bedId, out var save))
-        {
-            save = new BedSave
-            {
-                hasPlant = false,
-                plantDefId = null,
-                stage = PlantStage.Seed,
-                daysLeftInStage = 0,
-                lastWateredDay = int.MinValue
-            };
-            dict[bedId] = save;
-        }
-
-        return save;
-    }
-
-    public void MarkWatered(string greenhouseId, string bedId, int day)
-    {
-        var s = GetOrCreateBed(greenhouseId, bedId);
-        if (s == null) return;
-        s.lastWateredDay = day;
-    }
-
-    public bool IsWatered(string greenhouseId, string bedId, int day)
-    {
-        var s = GetOrCreateBed(greenhouseId, bedId);
-        if (s == null) return false;
-        return s.lastWateredDay == day;
     }
 
     void TrySubscribeDay()
@@ -96,9 +53,29 @@ public class GameData : MonoBehaviour
         if (DayNightSystem.Instance != null && !subscribedToDay)
         {
             DayNightSystem.Instance.OnDayAdvanced += OnDay;
+            CurrentDayMirror = DayNightSystem.Instance.CurrentDay;
             subscribedToDay = true;
             UnityEngine.Debug.Log("[GameData] Subscribed to DayNightSystem.");
         }
+    }
+
+    PlantDefinition DefById(string id)
+        => (id != null && reg != null && reg.TryGetValue(id, out var d)) ? d : null;
+
+    public BedSave GetOrCreateBed(string greenhouseId, string bedId)
+    {
+        if (string.IsNullOrEmpty(greenhouseId) || string.IsNullOrEmpty(bedId)) return null;
+        if (!beds.TryGetValue(greenhouseId, out var dict))
+        {
+            dict = new Dictionary<string, BedSave>();
+            beds[greenhouseId] = dict;
+        }
+        if (!dict.TryGetValue(bedId, out var save))
+        {
+            save = new BedSave();
+            dict[bedId] = save;
+        }
+        return save;
     }
 
     public void WritePlant(string greenhouseId, string bedId, PlantDefinition def, PlantStage stage, int daysLeft)
@@ -111,14 +88,30 @@ public class GameData : MonoBehaviour
         s.stage = stage;
         s.daysLeftInStage = daysLeft;
 
-        // ÚJ: ha ültetés (Seed állapot), töröljük a locsolás jelölést
+        // Ã¼ltetÃ©skor tÃ¶rÃ¶ljÃ¼k a "locsolva" jelÃ¶lÃ©st
         if (def != null && stage == PlantStage.Seed)
             s.lastWateredDay = int.MinValue;
     }
 
+    public void MarkWatered(string greenhouseId, string bedId, int day)
+    {
+        var s = GetOrCreateBed(greenhouseId, bedId);
+        if (s == null) return;
+        s.lastWateredDay = day;
+    }
+
+    public bool IsWatered(string greenhouseId, string bedId, int day)
+    {
+        if (day < 0) day = CurrentDayMirror;
+        var s = GetOrCreateBed(greenhouseId, bedId);
+        if (s == null) return false;
+        return s.lastWateredDay >= 0 && s.lastWateredDay == day;
+    }
+
     void OnDay(int newDay)
     {
-        UnityEngine.Debug.Log($"[GameData] Day tick {newDay}");
+        CurrentDayMirror = newDay;
+
         foreach (var gh in beds.Values)
             foreach (var s in gh.Values)
             {
@@ -135,11 +128,11 @@ public class GameData : MonoBehaviour
                     {
                         case PlantStage.Seed:
                             s.stage = PlantStage.Sapling;
-                            s.daysLeftInStage = Mathf.Max(1, def.daysSeedToSapling);   // <-- helyes
+                            s.daysLeftInStage = Mathf.Max(1, def.daysSaplingToMature);
                             break;
                         case PlantStage.Sapling:
                             s.stage = PlantStage.Mature;
-                            s.daysLeftInStage = Mathf.Max(1, def.daysSaplingToMature);
+                            s.daysLeftInStage = Mathf.Max(1, def.daysMatureToFruiting);
                             break;
                         case PlantStage.Mature:
                             s.stage = PlantStage.Fruiting;

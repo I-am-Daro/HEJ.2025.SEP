@@ -9,6 +9,6 @@ public static class TravelContext
 
     public static string interiorSpawnId = "FromExterior_GH";
 
-    // ÚJ: aktuális üvegház azonosító (kinti Entrance StableId-ja)
+    // melyik üvegházba léptünk (Entrance StableId)
     public static string currentGreenhouseId;
 }
