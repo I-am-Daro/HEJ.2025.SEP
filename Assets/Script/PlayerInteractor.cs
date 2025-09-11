@@ -59,4 +59,18 @@ public class PlayerInteractor : MonoBehaviour
         if (!promptText) return;
         promptText.gameObject.SetActive(false);
     }
+
+    public void OnWater(InputValue value)
+    {
+        if (value.Get<float>() <= 0.5f) return;
+        if (current == null) return;
+
+        // Ha a jelenlegi cél egy BedPlot, hívd meg rajta a Water()-t
+        var bed = current as BedPlot;
+        if (bed != null)
+        {
+            var stats = GetComponent<PlayerStats>();
+            bed.Water(stats);
+        }
+    }
 }

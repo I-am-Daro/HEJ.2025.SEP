@@ -1,24 +1,16 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class HUDController : MonoBehaviour
 {
-    [SerializeField] UIStatusBar o2Bar, energyBar, hungerBar;
+    [SerializeField] UIStatusBar o2Bar, energyBar, hungerBar, waterBar;
     [SerializeField] PlayerStats stats;
 
-    void OnEnable()
+    void Awake()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        TryBind();
-    }
-
-    void OnDisable() => SceneManager.sceneLoaded -= OnSceneLoaded;
-
-    void OnSceneLoaded(Scene s, LoadSceneMode m) => TryBind();
-
-    void TryBind()
-    {
-        if (!stats) stats = FindObjectOfType<PlayerStats>();
+        o2Bar.SetLabel("O2"); o2Bar.SetRange(0, 100);
+        energyBar.SetLabel("ENERGY"); energyBar.SetRange(0, 100);
+        hungerBar.SetLabel("HUNGER"); hungerBar.SetRange(0, 100);
+        waterBar.SetLabel("WATER"); waterBar.SetRange(0, 100);
     }
 
     void Update()
@@ -27,5 +19,6 @@ public class HUDController : MonoBehaviour
         o2Bar.SetValue(stats.oxygen, true);
         energyBar.SetValue(stats.energy, true);
         hungerBar.SetValue(stats.hunger, true);
+        waterBar.SetValue(stats.water, true);
     }
 }
