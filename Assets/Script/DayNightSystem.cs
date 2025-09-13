@@ -1,13 +1,12 @@
-using System;
 using UnityEngine;
+using System;
 
 public class DayNightSystem : MonoBehaviour
 {
     public static DayNightSystem Instance { get; private set; }
 
-    public int CurrentDay { get; private set; } = 1;
-
-    public event Action<int> OnDayAdvanced; // pl. növények/analizátor feliratkoznak
+    public int CurrentDay { get; private set; } = 0;
+    public event Action<int> OnDayAdvanced;
 
     void Awake()
     {
@@ -20,9 +19,15 @@ public class DayNightSystem : MonoBehaviour
     {
         CurrentDay++;
         OnDayAdvanced?.Invoke(CurrentDay);
-        Debug.Log($"[DayNight] New day: {CurrentDay}");
+        UnityEngine.Debug.Log($"[DayNight] New day: {CurrentDay}");
     }
 
-    // Opcionális: elsõ mentéshez kívülrõl is állítható
-    public void SetDay(int day) => CurrentDay = Mathf.Max(1, day);
+    // mentés betöltéshez
+    public void SetDay(int day, bool invokeEvent = false)
+    {
+        if (day < 0) day = 0;
+        CurrentDay = day;
+        if (invokeEvent) OnDayAdvanced?.Invoke(CurrentDay);
+        UnityEngine.Debug.Log($"[DayNight] SetDay -> {CurrentDay}{(invokeEvent ? " (invoke)" : "")}");
+    }
 }

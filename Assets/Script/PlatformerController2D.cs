@@ -9,11 +9,13 @@ public class PlatformerController2D : MonoBehaviour
 
     Rigidbody2D rb;
     float moveX;
+    PlayerStats stats;   // <-- ÚJ
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         MoveSpeed = defaultMoveSpeed;
+        stats = GetComponent<PlayerStats>(); // <-- ÚJ
     }
 
     public void OnMove(InputValue value)
@@ -24,6 +26,7 @@ public class PlatformerController2D : MonoBehaviour
 
     void FixedUpdate()
     {
-        rb.linearVelocity = new Vector2(moveX * MoveSpeed, rb.linearVelocity.y);
+        float mult = (stats != null) ? stats.MoveSpeedMultiplier : 1f; // <-- éhség lassít
+        rb.linearVelocity = new Vector2(moveX * (MoveSpeed * mult), rb.linearVelocity.y);
     }
 }

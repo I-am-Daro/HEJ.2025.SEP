@@ -11,10 +11,7 @@ public class PlantActor : MonoBehaviour
     int daysLeftInStage;
     SpriteRenderer sr;
 
-    void Awake()
-    {
-        sr = GetComponent<SpriteRenderer>();
-    }
+    void Awake() { sr = GetComponent<SpriteRenderer>(); }
 
     public void Init(PlantDefinition definition)
     {
@@ -25,7 +22,6 @@ public class PlantActor : MonoBehaviour
     void InitStage(PlantStage s)
     {
         stage = s;
-
         if (def == null) return;
 
         if (s == PlantStage.Seed) daysLeftInStage = Mathf.Max(1, def.daysSeedToSapling);
@@ -50,12 +46,12 @@ public class PlantActor : MonoBehaviour
         };
     }
 
-    public int GetDaysLeftExternal() => daysLeftInStage;
     public void SetDaysLeftForExternalRestore(int days)
     {
         daysLeftInStage = Mathf.Max(0, days);
         UpdateSprite();
     }
+    public int GetDaysLeftExternal() => daysLeftInStage;
 
     public int Harvest(out ProduceType type)
     {
@@ -65,7 +61,6 @@ public class PlantActor : MonoBehaviour
         stage = PlantStage.Mature;
         daysLeftInStage = Mathf.Max(1, def.regrowDaysAfterHarvest);
         UpdateSprite();
-
         return amt;
     }
 }

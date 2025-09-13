@@ -16,11 +16,12 @@ public class GreenhouseEntrance : MonoBehaviour, IInteractable
         var sid = GetComponent<StableId>();
         if (!sid || string.IsNullOrEmpty(sid.Id))
         {
-            UnityEngine.Debug.LogError("[GH Entrance] StableId hiányzik vagy üres!");
+            UnityEngine.Debug.LogError("[GH Entrance] StableId missing!");
             return;
         }
 
-        TravelContext.currentGreenhouseId = sid.Id;             // <-- melyik üvegház
+        TravelContext.currentGreenhouseId = sid.Id;   // <-- FONTOS
+
         TravelContext.returnScene = SceneManager.GetActiveScene().name;
         TravelContext.interiorSpawnId = interiorSpawnId;
 
