@@ -1,30 +1,38 @@
-using System.Diagnostics;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
 public class FoodDispenser : MonoBehaviour, IInteractable
 {
-    [SerializeField] float hungerDecrease = 35f;
-    [SerializeField] float cooldown = 2f;
-    float readyAt = 0f;
+    [Header("Use Settings")]
+    public int foodUnitsPerUse = 1;   // ennyit eszik a hûtõbõl
+    public float nutritionPerUnit = 25f; // 1 egység mennyit csökkent a hungerbõl (%-ban)
 
-    void Reset()
-    {
-        // kényelmi: legyen trigger, hogy a Player közelítését érzékeljük
-        var col = GetComponent<Collider2D>();
-        col.isTrigger = true;
-    }
+    void Reset() { GetComponent<Collider2D>().isTrigger = true; }
 
-    public string GetPrompt() => "Eat";
+    public string GetPrompt() => "Eat (E)";
 
     public void Interact(PlayerStats player)
     {
         if (!player) return;
-        if (Time.time < readyAt) return;
+        var inv = player.GetComponent<PlayerInventory>();
+        if (!inv)
+        {
+            UnityEngine.Debug.LogWarning("[FoodDispenser] PlayerInventory missing.");
+            return;
+        }
 
-        player.Eat(hungerDecrease);
-        readyAt = Time.time + cooldown;
+        if (inv.foodUnits < foodUnitsPerUse)
+        {
+            UnityEngine.Debug.Log("[FoodDispenser] No food.");
+            return;
+        }
 
-        // TODO: itt lehet SFX/anim, pl. AudioSource.PlayClipAtPoint(clip, transform.position);
+        // fogyasztás
+        inv.foodUnits -= foodUnitsPerUse;
+        inv.RaiseChanged();
+
+        // hatás
+        player.Eat(nutritionPerUnit * foodUnitsPerUse);
+        UnityEngine.Debug.Log($"[FoodDispenser] Ate {foodUnitsPerUse}, hunger now ~{player.hunger:0}.");
     }
 }
