@@ -9,11 +9,13 @@ public class TopDownMover : MonoBehaviour
 
     Rigidbody2D rb;
     Vector2 moveInput;
+    PlayerStats stats;   // <-- ÚJ
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         MoveSpeed = defaultMoveSpeed;
+        stats = GetComponent<PlayerStats>(); // <-- ÚJ
     }
 
     public void OnMove(InputValue value)
@@ -23,6 +25,7 @@ public class TopDownMover : MonoBehaviour
 
     void FixedUpdate()
     {
-        rb.linearVelocity = moveInput * MoveSpeed;
+        float mult = (stats != null) ? stats.MoveSpeedMultiplier : 1f; // <-- éhség lassít
+        rb.linearVelocity = moveInput * (MoveSpeed * mult);
     }
 }
