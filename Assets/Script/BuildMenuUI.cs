@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -8,11 +7,9 @@ public class BuildMenuUI : MonoBehaviour
 {
     public static BuildMenuUI I { get; private set; }
 
-    [SerializeField] GameObject root;
-    [SerializeField] Transform listParent;
+    [SerializeField] GameObject root;       // panel gyökér
+    [SerializeField] Transform listParent;  // ScrollView Content
     [SerializeField] Button itemButtonPrefab;
-
-    Action<BuildingDefinition> onPick;
 
     void Awake()
     {
@@ -21,20 +18,25 @@ public class BuildMenuUI : MonoBehaviour
         Hide();
     }
 
-    public void Show(List<BuildingDefinition> defs, Action<BuildingDefinition> pick)
+    public void Show(List<BuildingDefinition> defs)
     {
         Clear();
-        onPick = pick;
 
         foreach (var d in defs)
         {
             var b = Instantiate(itemButtonPrefab, listParent);
-            var img = b.GetComponentInChildren<Image>();
-            var tmps = b.GetComponentsInChildren<TextMeshProUGUI>();
-            if (img) img.sprite = d.icon;
-            if (tmps.Length > 0) tmps[0].text = d.displayName;
 
-            b.onClick.AddListener(() => { Hide(); onPick?.Invoke(d); });
+            var img = b.GetComponentInChildren<Image>();
+            if (img) img.sprite = d.icon;
+
+            var label = b.GetComponentInChildren<TextMeshProUGUI>();
+            if (label) label.text = d.displayName;
+
+            b.onClick.AddListener(() => {
+                Hide();
+                if (BuildManager.I == null) { Debug.LogError("BuildManager not found"); return; }
+                BuildManager.I.Pick(d);     // <- ezt hívjuk
+            });
         }
 
         root.SetActive(true);
@@ -44,7 +46,6 @@ public class BuildMenuUI : MonoBehaviour
     {
         root.SetActive(false);
         Clear();
-        onPick = null;
     }
 
     void Clear()

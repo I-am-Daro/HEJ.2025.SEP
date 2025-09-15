@@ -1,5 +1,6 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PowerGrid : MonoBehaviour
 {
@@ -8,32 +9,82 @@ public class PowerGrid : MonoBehaviour
     readonly List<PowerNode> nodes = new();
     readonly List<PowerConsumer> consumers = new();
 
+    [SerializeField] bool debugLog = false;
+
     void Awake()
     {
         if (I != null && I != this) { Destroy(gameObject); return; }
         I = this;
         DontDestroyOnLoad(gameObject);
+
+        // >>> COLD SCAN <<<  â€” ha a Node-ok elÅ‘bb enable-Å‘dtek, itt felvesszÃ¼k Å‘ket
+        ColdScan();
+        Rebuild();
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneManager.sceneUnloaded += OnSceneUnloaded;
+    }
+
+    void OnDestroy()
+    {
+        if (I == this)
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            SceneManager.sceneUnloaded -= OnSceneUnloaded;
+            I = null;
+        }
+    }
+
+    void OnSceneLoaded(Scene s, LoadSceneMode m)
+    {
+        ColdScan();   // Ãºj scene â†’ keressÃ¼nk minden aktuÃ¡lis Node-ot/Consumert
+        Rebuild();
+    }
+
+    void OnSceneUnloaded(Scene s)
+    {
+        ColdScan();   // biztonsÃ¡g kedvÃ©Ã©rt
+        Rebuild();
+    }
+
+    // --- COLD SCAN: beolvassa a jelenetben lÃ©vÅ‘ aktÃ­v pÃ©ldÃ¡nyokat ---
+    void ColdScan()
+    {
+        nodes.Clear();
+        consumers.Clear();
+
+        var foundNodes = FindObjectsByType<PowerNode>(FindObjectsSortMode.None);
+        foreach (var n in foundNodes)
+            if (n && n.isActiveAndEnabled && !nodes.Contains(n))
+                nodes.Add(n);
+
+        var foundConsumers = FindObjectsByType<PowerConsumer>(FindObjectsSortMode.None);
+        foreach (var c in foundConsumers)
+            if (c && c.isActiveAndEnabled && !consumers.Contains(c))
+                consumers.Add(c);
+
+       
     }
 
     public void Register(PowerNode n)
     {
-        if (!nodes.Contains(n)) nodes.Add(n);
+        if (n && !nodes.Contains(n)) nodes.Add(n);
         Rebuild();
     }
     public void Unregister(PowerNode n)
     {
-        nodes.Remove(n);
+        if (n) nodes.Remove(n);
         Rebuild();
     }
 
     public void Register(PowerConsumer c)
     {
-        if (!consumers.Contains(c)) consumers.Add(c);
+        if (c && !consumers.Contains(c)) consumers.Add(c);
         Rebuild();
     }
     public void Unregister(PowerConsumer c)
     {
-        consumers.Remove(c);
+        if (c) consumers.Remove(c);
         Rebuild();
     }
 
@@ -42,21 +93,30 @@ public class PowerGrid : MonoBehaviour
         // 1) reset
         foreach (var n in nodes) n.connectedToSource = false;
 
-        // 2) BFS forrásoktól
-        Queue<PowerNode> q = new();
-        foreach (var n in nodes) if (n.isSource) { n.connectedToSource = true; q.Enqueue(n); }
+        // 2) BFS a forrÃ¡soktÃ³l
+        var q = new Queue<PowerNode>();
+        int srcCount = 0;
+        foreach (var n in nodes)
+        {
+            if (n.isSource)
+            {
+                srcCount++;
+                n.connectedToSource = true;
+                q.Enqueue(n);
+            }
+        }
 
         while (q.Count > 0)
         {
             var a = q.Dequeue();
-            // keressünk szomszédokat sugár alapján
             foreach (var b in nodes)
             {
-                if (b.connectedToSource) continue;
-                float r = Mathf.Max(a.linkRadius, b.linkRadius);
-                if (Vector2.SqrMagnitude((Vector2)b.transform.position - (Vector2)a.transform.position) <= r * r * 4f) // kicsit megengedõbb
+                if (b == a || b.connectedToSource) continue;
+
+                float need = a.linkRadius + b.linkRadius;
+                float sqr = ((Vector2)b.transform.position - (Vector2)a.transform.position).sqrMagnitude;
+                if (sqr <= need * need)
                 {
-                    // csak akkor terjedjen tovább, ha A vagy B conduit (csõ) vagy source
                     if (a.isSource || a.isConduit || b.isConduit)
                     {
                         b.connectedToSource = true;
@@ -66,12 +126,10 @@ public class PowerGrid : MonoBehaviour
             }
         }
 
-        // 3) fogyasztók értesítése
+        // 3) fogyasztÃ³k Ã©rtesÃ­tÃ©se
         foreach (var c in consumers)
         {
-            bool powered = false;
-            if (c.node != null)
-                powered = c.node.connectedToSource;
+            bool powered = c && c.node && c.node.connectedToSource;
             c.SetPowered(powered);
         }
     }

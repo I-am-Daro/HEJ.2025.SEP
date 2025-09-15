@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 6235577101639587156}
   - component: {fileID: 8833846188949301277}
   - component: {fileID: 1593145380476220974}
+  - component: {fileID: 5975892718214184033}
   m_Layer: 7
   m_Name: GreenHouse
   m_TagString: Untagged
@@ -231,7 +232,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34a352d9cb295764abc0e69271f5df23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 74e08c0328724b6faea6290aa33dc56c
+  id: 
 --- !u!114 &8833846188949301277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,8 +246,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSource: 0
-  isConduit: 0
-  linkRadius: 0.6
+  isConduit: 1
+  linkRadius: 1.5
   connectedToSource: 0
 --- !u!114 &1593145380476220974
 MonoBehaviour:
@@ -264,3 +265,17 @@ MonoBehaviour:
   OnPowerChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5975892718214184033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4031609602157367242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f6b5ede0976c1343afa7864b3543056, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneKind: 0
+  playerRoot: {fileID: 301842445801716923, guid: 46be9e7f91a794a41a91fd0739723e1a, type: 3}

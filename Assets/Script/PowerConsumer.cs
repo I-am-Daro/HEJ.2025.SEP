@@ -12,7 +12,13 @@ public class PowerConsumer : MonoBehaviour
 
     bool last;
 
-    void OnEnable() { PowerGrid.I?.Register(this); }
+    void Reset()
+    {
+        if (!node) node = GetComponent<PowerNode>();
+        if (!node) node = GetComponentInParent<PowerNode>();
+    }
+
+    void OnEnable() { if (!node) Reset(); PowerGrid.I?.Register(this); }
     void OnDisable() { PowerGrid.I?.Unregister(this); }
 
     public void SetPowered(bool on)

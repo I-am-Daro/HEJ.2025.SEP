@@ -23,5 +23,5 @@ MonoBehaviour:
     m_Bits: 128
   requiresPower: 1
   isPipeSegment: 0
-  oxygenCost: 0
-  foodCost: 0
+  oxygenCost: 1
+  foodCost: 1

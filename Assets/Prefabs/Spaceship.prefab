@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3265103069718601641}
   - component: {fileID: 5307798325761438489}
   - component: {fileID: 4665325506280161149}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SpaceshipDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -81,7 +81,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.046699524, y: 0}
+  m_Offset: {x: -0.22538185, y: 0.12888074}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -91,7 +91,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.47073746, y: 1}
+  m_Size: {x: 0.2988968, y: 1.4868827}
   m_EdgeRadius: 0
 --- !u!1 &8103099812640413483
 GameObject:
@@ -105,7 +105,8 @@ GameObject:
   - component: {fileID: 9174185994915811136}
   - component: {fileID: 5464130477753612473}
   - component: {fileID: 5858005102111092220}
-  m_Layer: 0
+  - component: {fileID: 1088494659686351694}
+  m_Layer: 7
   m_Name: Spaceship
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -122,7 +123,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -14.15, y: 0.93, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.475, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3265103069718601641}
@@ -172,7 +173,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
+  m_Sprite: {fileID: -9095717837082945937, guid: 009224d67d63df748a24292391359ec3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -244,6 +245,22 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1, y: 2}
+  m_Offset: {x: -0.014562688, y: 0}
+  m_Size: {x: 0.9708746, y: 2}
   m_Direction: 0
+--- !u!114 &1088494659686351694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8103099812640413483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f72f0791d43644d4b99e63764a4cdd8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isSource: 1
+  isConduit: 1
+  linkRadius: 1.2
+  connectedToSource: 0
