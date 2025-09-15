@@ -1,62 +1,33 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(Collider2D))]
 public class PlayerInteractor : MonoBehaviour
 {
-    [Header("Prompt UI (opcionális)")]
-    [SerializeField] TextMeshProUGUI promptText;
-    [SerializeField] string keyHint = "E";
-
-    PlayerStats stats;
     IInteractable current;
-    Collider2D currentCol; // annak az objektumnak a collidere, amiben épp állunk
-
-    void Awake()
-    {
-        stats = GetComponent<PlayerStats>();
-        HidePrompt();
-    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        // Csak akkor figyelünk, ha a másik oldalon VAN IInteractable
-        var candidate = other.GetComponent<IInteractable>();
-        if (candidate == null) return;
-
-        current = candidate;
-        currentCol = other;
-        ShowPrompt(current.GetPrompt());
+        current = other.GetComponent<IInteractable>();
     }
-
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other != currentCol) return;
-        current = null;
-        currentCol = null;
-        HidePrompt();
+        if (current != null && other.GetComponent<IInteractable>() == current)
+            current = null;
     }
 
-    // Input System (Send Messages): On + ActionName
-    public void OnInteract(InputValue value)
+    public void OnInteract(InputValue v)
     {
-        if (value.Get<float>() <= 0.5f) return;   // csak lenyomáskor
-        if (current == null) return;
-
-        current.Interact(stats);
+        if (v.Get<float>() <= 0.5f || current == null) return;
+        current.Interact(GetComponent<PlayerStats>());
     }
 
-    void ShowPrompt(string text)
+    // ÚJ: Water action (Keyboard F, Gamepad shoulder)
+    public void OnWater(InputValue v)
     {
-        if (!promptText) return;
-        promptText.gameObject.SetActive(true);
-        promptText.text = $"{text} ({keyHint})";
-    }
+        if (v.Get<float>() <= 0.5f || current == null) return;
 
-    void HidePrompt()
-    {
-        if (!promptText) return;
-        promptText.gameObject.SetActive(false);
+        var bed = current as BedPlot;
+        if (bed != null)
+            bed.Water(GetComponent<PlayerStats>());
     }
 }

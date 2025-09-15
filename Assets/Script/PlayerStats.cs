@@ -6,7 +6,12 @@ public class PlayerStats : MonoBehaviour
     [Range(0, 100)] public float energy = 100f;
     [Range(0, 100)] public float hunger = 0f;
 
-    [Header("Rates per second")]
+    // Víz (locsoláshoz)
+    [Header("Water")]
+    [Range(0, 100)] public float water = 100f;
+    public float minWaterToWater = 5f; // ennyi alatt nem engedünk locsolni
+
+    [Header("O2 / Energy / Hunger ráták")]
     public float oxygenDrainExterior = 2f;
     public float oxygenDrainZeroG = 4f;
     public float oxygenRechargeInShip = 15f;
@@ -17,24 +22,25 @@ public class PlayerStats : MonoBehaviour
     public bool isZeroG = false;
     public bool isInShipInterior = false;
 
-    [Header("Suffocation (death on no O2)")]
-    [Tooltip("Mennyi idő teljen el zéró oxigénnél, mielőtt 'meghal'.")]
-    public float suffocationDelay = 4f;
-    bool isSuffocating = false;
-    float suffocationEndsAt = 0f;
+    [Header("Starvation (Hunger==100) hatások")]
+    public bool slowWhenStarving = true;
+    public float starvingSpeedMultiplier = 0.33f;     // mozgató scriptek olvashatják (MoveSpeed *= this)
+    public bool energyDrainBoostWhenStarving = true;
+    public float starvingEnergyMultiplier = 1.5f;     // energiavesztés szorzó, ha éhezik
 
-    [Header("Hunger slow")]
-    [Tooltip("Ha a hunger eléri a 100-at, erre a szorzóra esik a sebesség.")]
-    [Range(0.05f, 1f)] public float hungerSlowMultiplier = 0.33f;
-    public float hungerSlowThreshold = 100f;
+    [Header("Halál / respawn késleltetés (sec)")]
+    public float suffocationDelay = 4f;               // O2 0-nál
+    public float exhaustionDelay = 4f;               // Energy 0-nál
 
-    PlayerMovementService moveSvc;
-    bool hungerSlowActive = false;
+    // belső állapot
+    enum DeathCause { None, Oxygen, Energy }
+    DeathCause pendingDeath = DeathCause.None;
+    bool isDying = false;
+    float deathEndsAt = 0f;
 
-    void Awake()
-    {
-        moveSvc = GetComponent<PlayerMovementService>();
-    }
+    // Mozgás scripteknek hasznos lehet:
+    public float MoveSpeedMultiplier => (slowWhenStarving && hunger >= 100f) ? starvingSpeedMultiplier : 1f;
+    public bool IsStarving => hunger >= 100f;
 
     void Update()
     {
@@ -49,73 +55,70 @@ public class PlayerStats : MonoBehaviour
             oxygen = Mathf.Clamp(oxygen - o2Drain * Time.deltaTime, 0f, 100f);
         }
 
-        if (!hungerSlowActive && hunger >= hungerSlowThreshold)
-        {
-            hungerSlowActive = true;
-            if (moveSvc) moveSvc.SetSpeedMultiplier(hungerSlowMultiplier);
-        }
-        else if (hungerSlowActive && hunger < hungerSlowThreshold)
-        {
-            hungerSlowActive = false;
-            if (moveSvc) moveSvc.SetSpeedMultiplier(1f);
-        }
-        // --- Energia & Éhség ---
-        energy = Mathf.Clamp(energy - energyDrainPerSec * Time.deltaTime, 0f, 100f);
+        // --- Hunger ---
         hunger = Mathf.Clamp(hunger + hungerIncreasePerSec * Time.deltaTime, 0f, 100f);
 
-        // --- Fulladás logika ---
-        if (oxygen <= 0f)
+        // --- Energy (éhezéskor gyorsabban fogy) ---
+        float energyMult = (energyDrainBoostWhenStarving && hunger >= 100f) ? starvingEnergyMultiplier : 1f;
+        energy = Mathf.Clamp(energy - energyDrainPerSec * energyMult * Time.deltaTime, 0f, 100f);
+
+        // --- Halál / respawn logika ---
+        if (!isDying)
         {
-            if (!isSuffocating)
+            if (oxygen <= 0f)
             {
-                StartSuffocation();
+                StartDeathCountdown(DeathCause.Oxygen, Mathf.Max(0.01f, suffocationDelay));
             }
-            else
+            else if (energy <= 0f)
             {
-                if (Time.time >= suffocationEndsAt)
-                {
-                    // Meghalás → visszatöltés a checkpointból
-                    UnityEngine.Debug.Log("[Player] Suffocated. Respawning from checkpoint...");
-                    isSuffocating = false; // tisztítás, mielőtt átlépünk
-                    SaveSystem.LoadCheckpointAndPlacePlayer();
-                    return;
-                }
+                StartDeathCountdown(DeathCause.Energy, Mathf.Max(0.01f, exhaustionDelay));
             }
         }
         else
         {
-            // Van oxigén → ha épp fulladtunk, töröljük
-            if (isSuffocating) CancelSuffocation();
+            // ha visszatöltődött a kritikus stat a határidő előtt, megszakítjuk
+            if ((pendingDeath == DeathCause.Oxygen && oxygen > 0f) ||
+                (pendingDeath == DeathCause.Energy && energy > 0f))
+            {
+                CancelDeath();
+            }
+            else if (Time.time >= deathEndsAt)
+            {
+                // visszatöltjük a mentett napot/pozíciót
+                isDying = false;
+                pendingDeath = DeathCause.None;
+                SaveSystem.LoadCheckpointAndPlacePlayer();
+                return;
+            }
         }
-
-        // --- (Opcionális) halál energiára is ---
-        if (energy <= 0f)
-        {
-            UnityEngine.Debug.LogWarning("[Player] Energy depleted. Respawning from checkpoint...");
-            SaveSystem.LoadCheckpointAndPlacePlayer();
-        }
     }
 
-    void StartSuffocation()
+    void StartDeathCountdown(DeathCause cause, float delay)
     {
-        isSuffocating = true;
-        suffocationEndsAt = Time.time + Mathf.Max(0.01f, suffocationDelay);
-        // TODO: itt szólhat a „fuldoklás” SFX, UI villogás, vignette, stb.
-        // pl.: if (audioSource && gaspClip) audioSource.PlayOneShot(gaspClip);
-        UnityEngine.Debug.Log("[Player] No O2 – suffocation countdown started.");
+        pendingDeath = cause;
+        isDying = true;
+        deathEndsAt = Time.time + delay;
+        // ide jöhet majd hang/anim (pl. fuldoklás)
     }
 
-    void CancelSuffocation()
+    void CancelDeath()
     {
-        isSuffocating = false;
-        // TODO: itt állítsd le a SFX-et / UI-t
-        UnityEngine.Debug.Log("[Player] O2 restored – suffocation canceled.");
+        isDying = false;
+        pendingDeath = DeathCause.None;
     }
+
+    // --- Interakciókhoz használt segédek ---
 
     public void Eat(float amount)
+        => hunger = Mathf.Clamp(hunger - amount, 0f, 100f);
+
+    public void FullRest()
+        => energy = 100f;
+
+    public bool TryConsumeWater(float amount)
     {
-        hunger = Mathf.Clamp(hunger - amount, 0f, 100f);
-        // ha az evéssel 100 alá megy, a fenti Update vissza fogja állítani a szorzót 1.0-re
+        if (water < amount) return false;
+        water = Mathf.Max(0f, water - amount);
+        return true;
     }
-    public void FullRest() => energy = 100f;
 }
