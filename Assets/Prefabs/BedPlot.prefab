@@ -151,8 +151,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   soilRenderer: {fileID: 175930657735362423}
   plantAnchor: {fileID: 5750548139096092475}
-  waterCostPerWatering: 10
-  wateredToday: 0
+  waterCostPerWatering: 2
 --- !u!114 &2929677893800973927
 MonoBehaviour:
   m_ObjectHideFlags: 0

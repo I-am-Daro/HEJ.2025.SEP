@@ -24,6 +24,11 @@ public class PlayerMovementService : MonoBehaviour
 
     MoveMode currentMode;
 
+    void Awake() 
+    { 
+        //GetComponent<UnityEngine.InputSystem.PlayerInput>()?.neverAutoSwitchControlSchemes = true; 
+    }
+
     void Reset()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -79,4 +84,8 @@ public class PlayerMovementService : MonoBehaviour
     public void SetGravity(float newG) => rb.gravityScale = newG;
 
     public MoveMode CurrentMode => currentMode;
+    public void ApplyExterior() => Apply(MoveMode.ExteriorTopDown);
+    public void ApplyInterior() => Apply(MoveMode.InteriorSide);
+    public void ApplyZeroG() => Apply(MoveMode.ZeroG);
+
 }
