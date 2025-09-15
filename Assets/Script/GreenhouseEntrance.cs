@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Collider2D))]
@@ -11,17 +11,29 @@ public class GreenhouseEntrance : MonoBehaviour, IInteractable
 
     public string GetPrompt() => "Enter Greenhouse";
 
+    void Reset() { GetComponent<Collider2D>().isTrigger = true; }
+
     public void Interact(PlayerStats player)
     {
-        var sid = GetComponent<StableId>();
-        if (!sid || string.IsNullOrEmpty(sid.Id))
+        // ÁRAM ELLENŐRZÉS
+        var consumer = GetComponentInParent<PowerConsumer>() ?? GetComponent<PowerConsumer>();
+        if (!consumer || consumer.node == null || !consumer.node.connectedToSource)
         {
-            UnityEngine.Debug.LogError("[GH Entrance] StableId missing!");
+            Debug.Log("[GH Entrance] No power – connect greenhouse to the ship first.");
             return;
         }
 
-        TravelContext.currentGreenhouseId = sid.Id;   // <-- FONTOS
+        // StabilId kell a TravelContexthez
+        var sid = GetComponent<StableId>() ?? GetComponentInParent<StableId>();
+        if (!sid || string.IsNullOrEmpty(sid.Id))
+        {
+            Debug.LogError("[GH Entrance] StableId missing!");
+            return;
+        }
 
+        TravelContext.currentGreenhouseId = sid.Id;
+
+        // visszatérés beállítások
         TravelContext.returnScene = SceneManager.GetActiveScene().name;
         TravelContext.interiorSpawnId = interiorSpawnId;
 
