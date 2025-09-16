@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 0b2a4ce4cccc9064bb3671571a9a9afe
+guid: 6e7b8f89081abbf43a70d7b4770d606a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2499379491150930856
-    second: Astro_Idle_0
-  - first:
-      213: 7822473999476038690
-    second: Astro_Idle_1
+      213: -1020570685468411690
+    second: szervergep2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -54,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 64
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -129,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Astro_Idle_0
+      name: szervergep2_0
       rect:
         serializedVersion: 2
-        x: 7
-        y: 0
-        width: 45
-        height: 64
+        x: 11
+        y: 10
+        width: 39
+        height: 22
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -144,30 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8a3a2f8a7649fa220800000000000000
-      internalID: 2499379491150930856
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Astro_Idle_1
-      rect:
-        serializedVersion: 2
-        x: 71
-        y: 0
-        width: 45
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 22c9f7348a20f8c60800000000000000
-      internalID: 7822473999476038690
+      spriteID: 6d87a786e5436d1f0800000000000000
+      internalID: -1020570685468411690
       vertices: []
       indices: 
       edges: []
@@ -185,9 +160,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Astro_Idle_0: 2499379491150930856
-      Astro_Idle_1: 7822473999476038690
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
