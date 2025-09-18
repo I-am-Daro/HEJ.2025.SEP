@@ -154,6 +154,9 @@ public class BuildManager : MonoBehaviour
         ghost = null;
         ghostSprites = null;
         rotZ = 0f;
+
+        // takarítás / friss áramháló újraszámolása
+        PowerGrid.I?.Rebuild();
     }
 
     public void OpenBuildMenu()
@@ -178,6 +181,9 @@ public class BuildManager : MonoBehaviour
         ghost.name = $"GHOST_{def.displayName}";
         rotZ = 0f;
 
+        // JELÖLÉS: ez egy ghost példány
+        ghost.AddComponent<GhostMarker>();
+
         if (ghostLayer >= 0) SetLayerRecursive(ghost, ghostLayer);
 
         foreach (var col in ghost.GetComponentsInChildren<Collider2D>(true)) col.enabled = false;
@@ -191,6 +197,7 @@ public class BuildManager : MonoBehaviour
 
         SetGhostColor(okColor);
     }
+
 
     void SetGhostColor(Color c)
     {

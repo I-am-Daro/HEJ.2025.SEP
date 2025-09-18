@@ -12,16 +12,20 @@ public class PowerNode : MonoBehaviour
     [Tooltip("Mekkora távolságon belül tekintünk két csomópontot összekötöttnek.")]
     public float linkRadius = 0.6f; // rács=1-hez jó
 
-    // [HideInInspector] public bool connectedToSource = false;
-    [SerializeField] public bool connectedToSource = false; // DEBUG: látszódjon
+    [SerializeField] public bool connectedToSource = false; // debug view
+
+    bool IsGhost() => GetComponentInParent<GhostMarker>() != null;
 
     void OnEnable()
     {
+        if (IsGhost()) return;             // GHOST példányt kihagyjuk
         PowerGrid.I?.Register(this);
     }
+
     void OnDisable()
     {
-        Debug.Log($"[PowerNode] UNREGISTER name='{name}'");
+        if (IsGhost()) return;             // GHOST-nál semmi dolgunk
+        PowerGrid.I?.Unregister(this);     // rendes leiratkozás
     }
 
 #if UNITY_EDITOR

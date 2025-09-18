@@ -231,8 +231,15 @@ public class BedPlot : MonoBehaviour, IInteractable
     public void Water(PlayerStats player)
     {
         if (!player) return;
-        if (!currentPlant) { UnityEngine.Debug.Log("[BedPlot] Nothing to water."); return; }
 
+        var inv = player.GetComponent<PlayerInventory>();
+        if (!inv || !inv.HasWateringCan)
+        {
+            UnityEngine.Debug.Log("[BedPlot] You need a watering can.");
+            return;
+        }
+
+        if (!currentPlant) { UnityEngine.Debug.Log("[BedPlot] Nothing to water."); return; }
         if (WateredToday) { UnityEngine.Debug.Log("[BedPlot] Already watered today."); return; }
 
         float need = Mathf.Max(player.minWaterToWater, waterCostPerWatering);
@@ -245,7 +252,17 @@ public class BedPlot : MonoBehaviour, IInteractable
         int day = Today();
 
         if (GameData.I != null && KeysValid())
+        {
+            // Jelöljük, hogy MA locsoltunk
             GameData.I.MarkWatered(greenhouseIdCached, bedIdCached, day);
+
+            // Ha Withered volt, próbáljuk azonnal életre hozni (mentés alapján)
+            if (GameData.I.TryReviveIfWithered(greenhouseIdCached, bedIdCached, out var revivedStage))
+            {
+                // Vizuál azonnali frissítése
+                ForcePlantState(currentPlant, revivedStage, currentPlant.GetDaysLeftExternal());
+            }
+        }
 
         lastWateredDayLocal = day; // azonnali tiltás
         WriteSave();

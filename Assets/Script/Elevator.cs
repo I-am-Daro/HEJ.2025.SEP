@@ -1,83 +1,100 @@
-using System.Collections;
+Ôªøusing System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Collider2D))]
 public class Elevator : MonoBehaviour, IInteractable
 {
-    [Header("Landings (set in inspector)")]
-    [SerializeField] Transform landingA;         // AlsÛ ajtÛ kˆzÈppontja
-    [SerializeField] Transform landingB;         // Felsı ajtÛ kˆzÈppontja
+    [Header("Landings (ajt√≥k poz√≠ci√≥ja)")]
+    [SerializeField] Transform landingA;   // als√≥ ajt√≥ k√∂z√©p
+    [SerializeField] Transform landingB;   // fels≈ë ajt√≥ k√∂z√©p
 
-    [Header("Doors (optional anim)")]
-    [SerializeField] Animator doorA;             // AjtÛ anim az alsÛ ·llom·son (nyit/zar)
-    [SerializeField] Animator doorB;             // AjtÛ anim a felsı ·llom·son
-    [SerializeField] float doorAnimTime = 0.35f; // ajtÛ csuk/nyit idı
+    [Header("Doors (bool param: IsOpen)")]
+    [SerializeField] ElevatorDoor doorA;
+    [SerializeField] ElevatorDoor doorB;
 
-    [Header("Snap / feel")]
-    [SerializeField] Vector2 playerSnapOffset = new Vector2(0.0f, 0.0f); // hova ·llÌtsuk pontosan a j·tÈkost
-    [SerializeField] float hideDuringTravel = 0.15f; // utaz·skor ennyi idıre elrejtj¸k
+    [Header("Timing (animok hossz√°hoz igaz√≠tsd)")]
+    [SerializeField] float openTime = 0.35f;   // ajt√≥nyit√°s klip hossza
+    [SerializeField] float closeTime = 0.40f;   // ajt√≥z√°r√°s klip hossza
+    [SerializeField] float transitTime = 0.20f; // ‚Äûutaz√°s‚Äù (rejtve) id≈ë
 
-    [Header("Sorting mask (opcion·lis)")]
-    [SerializeField] SpriteRenderer frontDoorOverlay; // egy el¸lsı ajtÛ sprite ami takar (sorting layer: Foreground)
+    [Header("Snap / FX")]
+    [SerializeField] Vector2 playerSnapOffset = Vector2.zero;
 
-    public string GetPrompt() => "Use elevator (E)";
+    bool busy;
+
+    void Awake()
+    {
+        // Indul√°skor mindk√©t ajt√≥ legyen z√°rt p√≥zban, anim√°ci√≥ lej√°tsz√°sa n√©lk√ºl.
+        if (doorA) doorA.SnapTo(false);
+        if (doorB) doorB.SnapTo(false);
+    }
+
+    void Reset()
+    {
+        var col = GetComponent<Collider2D>();
+        col.isTrigger = true;
+    }
+
+    public string GetPrompt() => busy ? "" : "Use elevator (E)";
 
     public void Interact(PlayerStats player)
     {
-        if (!player) return;
+        if (busy || !player) return;
+        if (!landingA || !landingB || !doorA || !doorB)
+        {
+            Debug.LogWarning("[Elevator] Missing refs (landings/doors).");
+            return;
+        }
         StartCoroutine(Ride(player));
     }
 
     IEnumerator Ride(PlayerStats player)
     {
-        // referenci·k
+        busy = true;
+
         var rb = player.GetComponent<Rigidbody2D>();
-        var pi = player.GetComponent<PlayerInput>();     // n·lad ez van a Playeren
+        var pi = player.GetComponent<PlayerInput>();
         var sr = player.GetComponentInChildren<SpriteRenderer>(true);
 
-        // melyik ·llom·shoz vagyunk kˆzelebb?
+        // Melyik ajt√≥hoz vagyunk k√∂zelebb?
         Vector3 p = player.transform.position;
-        float dA = (landingA.position - p).sqrMagnitude;
-        float dB = (landingB.position - p).sqrMagnitude;
-        bool fromA = dA <= dB;                   // innen indulunk
+        bool fromA = (landingA.position - p).sqrMagnitude <= (landingB.position - p).sqrMagnitude;
+
         var fromDoor = fromA ? doorA : doorB;
         var toDoor = fromA ? doorB : doorA;
-        var toPos = fromA ? landingB.position : landingA.position;
+        var toPos = (fromA ? landingB.position : landingA.position) + (Vector3)playerSnapOffset;
 
-        // 1) AjtÛ csuk + input lock
-        if (fromDoor) fromDoor.SetTrigger("Close");
-        if (frontDoorOverlay) frontDoorOverlay.enabled = true;
+        // Input / fizika lock
+        if (pi) pi.enabled = false;
+        if (rb) { rb.linearVelocity = Vector2.zero; rb.simulated = false; }
 
-        if (pi) pi.enabled = false;             // teljes kontroll lock
-        if (rb)
-        {
-            rb.linearVelocity = Vector2.zero;
-            rb.simulated = false;               // ne ìeszkal·lÛdjonî a fizika
-        }
+        // ---- INDUL√ì AJT√ì: NYIT ‚Üí J√ÅT√âKOS ELT≈∞NIK ‚Üí Z√ÅR ----
+        yield return fromDoor.Open(openTime);
 
-        yield return new WaitForSeconds(doorAnimTime);
+        if (sr) sr.enabled = false;                 // most t≈±nj√∂n el
 
-        // 2) L·thatatlann· tessz¸k, teleport·lunk
-        if (sr) sr.enabled = false;
+        yield return fromDoor.Close(closeTime);     // ajt√≥ csuk√≥dik
 
-        // (kis ÈlmÈny: fekete frame)
-        if (hideDuringTravel > 0f)
-            yield return new WaitForSeconds(hideDuringTravel);
+        // ---- TRANZIT ----
+        if (transitTime > 0f) yield return new WaitForSeconds(transitTime);
+        player.transform.position = toPos;
 
-        player.transform.position = toPos + (Vector3)playerSnapOffset;
+        // ---- C√âL AJT√ì: NYIT ‚Üí J√ÅT√âKOS MEGJELENIK ‚Üí Z√ÅR ----
+        yield return toDoor.Open(openTime);
 
-        // 3) Fent ajtÛ nyit
-        if (toDoor) toDoor.SetTrigger("Open");
-        yield return new WaitForSeconds(doorAnimTime * 0.8f);
+        if (sr) sr.enabled = true;                  // megjelenik
 
-        // 4) Vissza·llÌt·s
+        yield return toDoor.Close(closeTime);
+
+        // Unlock
         if (rb) rb.simulated = true;
         if (pi) pi.enabled = true;
-        if (sr) sr.enabled = true;
-        if (frontDoorOverlay) frontDoorOverlay.enabled = false;
+
+        busy = false;
     }
 
-    // Hasznos gizmo a be·llÌt·shoz
+#if UNITY_EDITOR
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
@@ -85,4 +102,5 @@ public class Elevator : MonoBehaviour, IInteractable
         if (landingB) Gizmos.DrawWireSphere(landingB.position, 0.15f);
         if (landingA && landingB) Gizmos.DrawLine(landingA.position, landingB.position);
     }
+#endif
 }

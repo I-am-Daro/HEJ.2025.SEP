@@ -45,7 +45,7 @@ public class PlayerInventory : MonoBehaviour
         RaiseChanged();
     }
 
-    // ha UI nélkül automatikusan választasz
+    // Ha UI nélkül automatikusan választasz
     public SeedItem GetAutoSeedChoice()
     {
         if (aerolgaeSeeds > 0) return aerolgaeSeedRef;
@@ -57,22 +57,29 @@ public class PlayerInventory : MonoBehaviour
     public List<SeedSelectionUI.SeedOption> GetSeedOptions()
     {
         var list = new List<SeedSelectionUI.SeedOption>();
+
         if (aerolgaeSeedRef && aerolgaeSeeds > 0)
+        {
             list.Add(new SeedSelectionUI.SeedOption
             {
                 def = aerolgaeSeedRef.plant,
                 count = aerolgaeSeeds,
                 icon = aerolgaeSeedRef.icon ? aerolgaeSeedRef.icon :
-                       (aerolgaeSeedRef.plant ? aerolgaeSeedRef.plant.seedSprite : null)
+                        (aerolgaeSeedRef.plant ? aerolgaeSeedRef.plant.seedSprite : null)
             });
+        }
+
         if (carrotSeedRef && carrotSeeds > 0)
+        {
             list.Add(new SeedSelectionUI.SeedOption
             {
                 def = carrotSeedRef.plant,
                 count = carrotSeeds,
                 icon = carrotSeedRef.icon ? carrotSeedRef.icon :
-                       (carrotSeedRef.plant ? carrotSeedRef.plant.seedSprite : null)
+                        (carrotSeedRef.plant ? carrotSeedRef.plant.seedSprite : null)
             });
+        }
+
         return list;
     }
 
@@ -82,5 +89,24 @@ public class PlayerInventory : MonoBehaviour
         if (aerolgaeSeedRef && aerolgaeSeedRef.plant == def) return aerolgaeSeedRef;
         if (carrotSeedRef && carrotSeedRef.plant == def) return carrotSeedRef;
         return null;
+    }
+
+    // === Watering Can support ===
+    WateringCan _carriedCan;
+    public bool HasWateringCan => _carriedCan != null;
+    public WateringCan CurrentCan => _carriedCan;
+
+    public bool TryTakeCan(WateringCan can)
+    {
+        if (_carriedCan != null || can == null) return false;
+        _carriedCan = can;
+        return true;
+    }
+
+    public bool TryReturnCan(WateringCan can)
+    {
+        if (_carriedCan != can) return false;
+        _carriedCan = null;
+        return true;
     }
 }

@@ -90,17 +90,19 @@ public class PowerGrid : MonoBehaviour
 
     public void Rebuild()
     {
+        // 0) TAKARÍTÁS – törölt referenciák eltávolítása (különösen ghost destroy után fontos)
+        nodes.RemoveAll(x => x == null);
+        consumers.RemoveAll(x => x == null);
+
         // 1) reset
         foreach (var n in nodes) n.connectedToSource = false;
 
         // 2) BFS a forrásoktól
         var q = new Queue<PowerNode>();
-        int srcCount = 0;
         foreach (var n in nodes)
         {
-            if (n.isSource)
+            if (n != null && n.isSource)
             {
-                srcCount++;
                 n.connectedToSource = true;
                 q.Enqueue(n);
             }
@@ -109,9 +111,11 @@ public class PowerGrid : MonoBehaviour
         while (q.Count > 0)
         {
             var a = q.Dequeue();
+            if (a == null) continue;
+
             foreach (var b in nodes)
             {
-                if (b == a || b.connectedToSource) continue;
+                if (b == null || b == a || b.connectedToSource) continue;
 
                 float need = a.linkRadius + b.linkRadius;
                 float sqr = ((Vector2)b.transform.position - (Vector2)a.transform.position).sqrMagnitude;
@@ -129,7 +133,8 @@ public class PowerGrid : MonoBehaviour
         // 3) fogyasztók értesítése
         foreach (var c in consumers)
         {
-            bool powered = c && c.node && c.node.connectedToSource;
+            if (c == null) continue;
+            bool powered = c.node && c.node.connectedToSource;
             c.SetPowered(powered);
         }
     }
