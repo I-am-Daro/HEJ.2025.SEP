@@ -6,7 +6,10 @@ public class GreenhouseEntrance : MonoBehaviour, IInteractable
 {
     [SerializeField] string interiorScene = "Greenhouse_Interior";
     [SerializeField] string interiorSpawnId = "FromExterior_GH";
+
+    [Tooltip("Ha false, név szerinti spawnra esünk vissza (exteriorSpawnId).")]
     [SerializeField] bool returnByWorldPosition = true;
+
     [SerializeField] string exteriorSpawnId = "FromGreenhouse_GH";
 
     public string GetPrompt() => "Enter Greenhouse";
@@ -39,8 +42,9 @@ public class GreenhouseEntrance : MonoBehaviour, IInteractable
 
         if (returnByWorldPosition)
         {
+            // 🔧 FONTOS: a JÁTÉKOS AKTUÁLIS POZÍCIÓJÁT mentjük, nem a kapuét
             TravelContext.useWorldPosition = true;
-            TravelContext.returnWorldPos = transform.position;
+            TravelContext.returnWorldPos = player ? player.transform.position : transform.position;
         }
         else
         {
@@ -48,6 +52,7 @@ public class GreenhouseEntrance : MonoBehaviour, IInteractable
             TravelContext.returnSpawnId = exteriorSpawnId;
         }
 
+        // belépés az interiorba
         SpawnPoint.NextSpawnId = interiorSpawnId;
         SceneManager.LoadScene(interiorScene);
     }

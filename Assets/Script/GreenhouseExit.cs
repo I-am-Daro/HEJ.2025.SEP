@@ -1,48 +1,45 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Collider2D))]
-public class GreenhouseExit : MonoBehaviour
+public class GreenhouseExit : MonoBehaviour, IInteractable
 {
-    void Reset() { GetComponent<Collider2D>().isTrigger = true; }
+    [Header("Target exterior scene name (exact)")]
+    [SerializeField] string exteriorSceneName = "Planet_Exterior";
 
-    void OnTriggerEnter2D(Collider2D other)
+    [SerializeField] string fallbackSpawnId = "FromGreenhouse_GH"; // csak ha NINCS world-pos
+
+    public string GetPrompt() => "Exit Greenhouse";
+
+    public void Interact(PlayerStats player)
     {
-        if (!other.CompareTag("Player")) return;
+        if (!player) return;
 
-        if (string.IsNullOrEmpty(TravelContext.returnScene))
+        // Kanna guard: amíg nálad van, nem léphetsz ki
+        var inv = player.GetComponent<PlayerInventory>();
+        if (inv && inv.HasWateringCan)
         {
-            Debug.LogError("[GreenhouseExit] Missing TravelContext.returnScene.");
+            Debug.Log("[GreenhouseExit] Tedd vissza a locsolókannát, mielőtt kimennél.");
             return;
         }
 
-        if (TravelContext.useWorldPosition)
-        {
-            // Vil�gpoz�ci�ra vissza
-            var sceneName = TravelContext.returnScene;
-            SceneManager.sceneLoaded += OnLoaded;
-            SceneManager.LoadScene(sceneName);
-        }
-        else
-        {
-            // SpawnPointtal vissza
-            SpawnPoint.NextSpawnId = TravelContext.returnSpawnId;
-            SceneManager.LoadScene(TravelContext.returnScene);
-        }
-    }
+        // VISSZAÚT: ha belépéskor eltároltunk world-positiont, akkor azt használjuk.
+        // (Ezt a GreenhouseEntrance már beállította.)
+        bool haveWorldReturn = TravelContext.useWorldPosition;
 
-    void OnLoaded(Scene s, LoadSceneMode m)
-    {
-        SceneManager.sceneLoaded -= OnLoaded;
-
-        var player = GameObject.FindGameObjectWithTag("Player");
-        if (player)
-        {
-            player.transform.position = TravelContext.returnWorldPos;
-        }
+        // Ha mégsem lenne world-pos (ritka), essen vissza named spawnra:
+        if (!haveWorldReturn)
+            SpawnPoint.NextSpawnId = fallbackSpawnId;
         else
+            SpawnPoint.NextSpawnId = null; // ne írja felül a world-pos-t
+
+        if (string.IsNullOrEmpty(exteriorSceneName))
         {
-            Debug.LogError("[GreenhouseExit] Player not found after load.");
+            Debug.LogError("[GreenhouseExit] exteriorSceneName nincs beállítva!");
+            return;
         }
+
+        Debug.Log($"[GreenhouseExit] Loading scene '{exteriorSceneName}' (worldPos={(haveWorldReturn ? "YES" : "NO")})");
+        SceneManager.LoadScene(exteriorSceneName);
     }
 }
