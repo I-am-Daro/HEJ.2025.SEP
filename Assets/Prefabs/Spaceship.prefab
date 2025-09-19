@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3265103069718601641}
   - component: {fileID: 5307798325761438489}
+  - component: {fileID: 4073251194988352606}
   - component: {fileID: 4665325506280161149}
   m_Layer: 7
   m_Name: SpaceshipDoor
@@ -40,13 +41,29 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1950172445118767658}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 683efd346348c9e458223b961d460505, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   targetScene: Ship_Interior
   targetSpawnId: FromExteriorDoor
+--- !u!114 &4073251194988352606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1950172445118767658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72e67e8a6ea5fee47940e35cada0170a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetScene: Ship_Interior
+  targetSpawnId: FromExteriorDoor
+  promptText: Enter
+  requireNotNullTarget: 1
 --- !u!61 &4665325506280161149
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -262,5 +279,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isSource: 1
   isConduit: 1
-  linkRadius: 1.2
-  connectedToSource: 0
+  linkRadius: 2
+  connectedToSource: 1

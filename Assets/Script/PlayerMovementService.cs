@@ -13,7 +13,7 @@ public class PlayerMovementService : MonoBehaviour
     [Header("Alap presetek")]
     public float exteriorSpeed = 4f;   // top-down
     public float interiorSpeed = 5f;   // side
-    public float zeroGSpeed = 6f;    // jetpack-szerû
+    public float zeroGSpeed = 6f;     // jetpack-szerû
 
     public float interiorGravity = 2f;
     public float exteriorGravity = 0f;
@@ -23,11 +23,6 @@ public class PlayerMovementService : MonoBehaviour
     [Range(0f, 3f)] public float speedMultiplier = 1f;
 
     MoveMode currentMode;
-
-    void Awake() 
-    { 
-        //GetComponent<UnityEngine.InputSystem.PlayerInput>()?.neverAutoSwitchControlSchemes = true; 
-    }
 
     void Reset()
     {
@@ -50,16 +45,20 @@ public class PlayerMovementService : MonoBehaviour
             MoveMode.ZeroG => zeroGGravity,
             _ => exteriorGravity
         });
-        rb.gravityScale = g;
-        rb.freezeRotation = true;
 
-        // alap sebesség (vagy override), majd szorozzuk a multiplierrel
+        if (rb)
+        {
+            rb.gravityScale = g;
+            rb.freezeRotation = true;
+        }
+
         float baseSpd = speedOverride ?? (mode switch
         {
             MoveMode.InteriorSide => interiorSpeed,
             MoveMode.ZeroG => zeroGSpeed,
             _ => exteriorSpeed
         });
+
         float finalSpd = baseSpd * Mathf.Max(0f, speedMultiplier);
 
         if (topDown) topDown.MoveSpeed = finalSpd;
@@ -69,8 +68,7 @@ public class PlayerMovementService : MonoBehaviour
     public void SetSpeedMultiplier(float m)
     {
         speedMultiplier = Mathf.Max(0f, m);
-        // re-apply current mode, hogy azonnal érvényesüljön
-        Apply(currentMode);
+        Apply(currentMode); // azonnal érvényesüljön
     }
 
     // kényelmi API-k
@@ -81,11 +79,14 @@ public class PlayerMovementService : MonoBehaviour
         if (side && side.enabled) side.MoveSpeed = final;
     }
 
-    public void SetGravity(float newG) => rb.gravityScale = newG;
+    public void SetGravity(float newG)
+    {
+        if (rb) rb.gravityScale = newG;
+    }
 
     public MoveMode CurrentMode => currentMode;
+
     public void ApplyExterior() => Apply(MoveMode.ExteriorTopDown);
     public void ApplyInterior() => Apply(MoveMode.InteriorSide);
     public void ApplyZeroG() => Apply(MoveMode.ZeroG);
-
 }

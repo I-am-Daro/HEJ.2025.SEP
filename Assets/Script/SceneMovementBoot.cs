@@ -6,6 +6,10 @@ public class SceneMovementBoot : MonoBehaviour
 {
     [SerializeField] SceneKind sceneKind = SceneKind.Exterior;
 
+    [Header("Player Scale")]
+    [SerializeField] Vector3 exteriorScale = new Vector3(1f, 1f, 1f);
+    [SerializeField] Vector3 interiorScale = new Vector3(2f, 2f, 1f);
+
     void Start()
     {
         var player = GameObject.FindGameObjectWithTag("Player");
@@ -17,11 +21,12 @@ public class SceneMovementBoot : MonoBehaviour
         if (sceneKind == SceneKind.Interior)
         {
             move.Apply(MoveMode.InteriorSide);
+            player.transform.localScale = interiorScale;  // nagyobb belül
         }
         else
         {
-            // Exterior: induljunk top-downban; ZeroG zóna majd felülírja
             move.Apply(MoveMode.ExteriorTopDown);
+            player.transform.localScale = exteriorScale;  // kisebb kívül
         }
     }
 }

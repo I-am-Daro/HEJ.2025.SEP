@@ -368,7 +368,7 @@ GameObject:
   m_Component:
   - component: {fileID: 196464599}
   - component: {fileID: 196464598}
-  - component: {fileID: 196464597}
+  - component: {fileID: 196464601}
   - component: {fileID: 196464600}
   m_Layer: 0
   m_Name: Door
@@ -377,20 +377,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &196464597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 196464596}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 683efd346348c9e458223b961d460505, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetScene: Planet_Exterior
-  targetSpawnId: FromShipDoor
 --- !u!212 &196464598
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -436,7 +422,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.12156863}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -495,9 +481,25 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1, y: 2}
+  m_Offset: {x: -1.910302, y: -0.049382165}
+  m_Size: {x: 4.820605, y: 2.0987644}
   m_Direction: 0
+--- !u!114 &196464601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 196464596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72e67e8a6ea5fee47940e35cada0170a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetScene: Planet_Exterior
+  targetSpawnId: FromShipDoor
+  promptText: Enter
+  requireNotNullTarget: 1
 --- !u!1 &228227214
 GameObject:
   m_ObjectHideFlags: 0
@@ -1761,7 +1763,7 @@ Transform:
   m_GameObject: {fileID: 1354358835}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.03, y: -0.13, z: 0}
+  m_LocalPosition: {x: -0.03, y: -0.35, z: 0}
   m_LocalScale: {x: 17.793125, y: 0.225, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2018,6 +2020,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneKind: 1
+  exteriorScale: {x: 1, y: 1, z: 1}
+  interiorScale: {x: 2, y: 2, z: 1}
 --- !u!4 &1620242544
 Transform:
   m_ObjectHideFlags: 0
@@ -2162,7 +2166,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.03, y: -4.63, z: 0}
-  m_LocalScale: {x: 17.793125, y: 1, z: 1}
+  m_LocalScale: {x: 17.793125, y: 0.6125, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
