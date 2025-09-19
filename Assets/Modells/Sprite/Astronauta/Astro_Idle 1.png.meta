@@ -145,12 +145,12 @@ TextureImporter:
       name: Astro_Idle 1_0
       rect:
         serializedVersion: 2
-        x: 7
+        x: 8
         y: 0
-        width: 45
+        width: 43
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -172,7 +172,7 @@ TextureImporter:
         width: 45
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -189,7 +189,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: cd35ddb3caf49be4fbdc8b9279a84aca
     internalID: 0
     vertices: []
     indices: 

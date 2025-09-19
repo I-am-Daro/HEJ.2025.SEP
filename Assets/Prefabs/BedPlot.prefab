@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 175930657735362423}
   - component: {fileID: 6032892388202712998}
   - component: {fileID: 3968133742550519669}
-  - component: {fileID: 2929677893800973927}
+  - component: {fileID: -8610889663975249089}
   m_Layer: 0
   m_Name: BedPlot
   m_TagString: Untagged
@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -3.95, y: -1.68, z: 0}
-  m_LocalScale: {x: 3.45, y: 0.625, z: 1}
+  m_LocalScale: {x: 3, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5750548139096092475}
@@ -79,7 +79,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -152,7 +152,7 @@ MonoBehaviour:
   soilRenderer: {fileID: 175930657735362423}
   plantAnchor: {fileID: 5750548139096092475}
   waterCostPerWatering: 2
---- !u!114 &2929677893800973927
+--- !u!114 &-8610889663975249089
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -161,10 +161,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3444736860651766072}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34a352d9cb295764abc0e69271f5df23, type: 3}
+  m_Script: {fileID: 11500000, guid: b04a793681b30a14ab287fef593cc367, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 74ce173305364acbac9394f225d2b498
+  localId: A
 --- !u!1 &8919885429881268841
 GameObject:
   m_ObjectHideFlags: 0
@@ -190,8 +190,8 @@ Transform:
   m_GameObject: {fileID: 8919885429881268841}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.84, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.499, z: 0}
+  m_LocalScale: {x: 0.33, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2487294706022533920}

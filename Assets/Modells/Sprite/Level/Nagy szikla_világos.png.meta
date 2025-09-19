@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      "Nagy szikla_vil\xE1gos_0": 7515865809439946069
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

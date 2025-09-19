@@ -12,6 +12,10 @@ public class GameData : MonoBehaviour
     // -----------------------------
     // PLANT SAVE STRUCTURE
     // -----------------------------
+
+    [Header("Plant revive settings")]
+    public int reviveMinDaysLeft = 1;
+
     [Serializable]
     public class BedSave
     {
@@ -20,12 +24,12 @@ public class GameData : MonoBehaviour
         public PlantStage stage;
         public int daysLeftInStage;
 
-        // Locsolási állapot
-        public int lastWateredDay = int.MinValue;  // utolsó nap, amikor locsolták
-        public int missedWaterDays = 0;            // egymás utáni száraz napok
+        public int lastWateredDay = int.MinValue;
+        public int missedWaterDays = 0;
 
-        // Hervadás előtti stádium (revive-hoz)
+        // Withered előtti állapot
         public PlantStage? prevStageBeforeWither = null;
+        public int? prevDaysLeftBeforeWither = null;   // <<< ÚJ
     }
 
     // greenhouseId -> (bedId -> BedSave)
@@ -108,6 +112,13 @@ public class GameData : MonoBehaviour
     // -----------------------------
     // REGISTRY HELPERS
     // -----------------------------
+    int ClampReviveDays(int? savedDays)
+    {
+        int d = savedDays.HasValue ? savedDays.Value : 0;
+        return Mathf.Max(reviveMinDaysLeft, d);
+    }
+
+
     private PlantDefinition PlantDefById(string id)
         => (!string.IsNullOrEmpty(id) && plantReg.TryGetValue(id, out var d)) ? d : null;
 
@@ -115,6 +126,39 @@ public class GameData : MonoBehaviour
 
     public BuildingDefinition BuildingDef(string id)
         => (!string.IsNullOrEmpty(id) && buildReg.TryGetValue(id, out var d)) ? d : null;
+
+
+    private void EnsureMinDaysForStage(BedSave s)
+    {
+        if (s == null) return;
+        if (s.daysLeftInStage > 0 && s.daysLeftInStage >= reviveMinDaysLeft) return;
+
+        var def = PlantDefById(s.plantDefId);
+        // Ha nincs definíció vagy 0-ra futottunk, akkor legalább reviveMinDaysLeft legyen
+        int min = Mathf.Max(1, reviveMinDaysLeft);
+
+        if (def == null)
+        {
+            s.daysLeftInStage = min;
+            return;
+        }
+
+        switch (s.stage)
+        {
+            case PlantStage.Seed:
+                s.daysLeftInStage = Mathf.Max(min, def.daysSeedToSapling > 0 ? 1 : min);
+                break;
+            case PlantStage.Sapling:
+                s.daysLeftInStage = Mathf.Max(min, 1); // nem kell pontos érték, a min a lényeg
+                break;
+            case PlantStage.Mature:
+                s.daysLeftInStage = Mathf.Max(min, 1);
+                break;
+            case PlantStage.Fruiting:
+                // Fruitingben nincs számláló – itt nem kell semmi
+                break;
+        }
+    }
 
     // -----------------------------
     // BEDS / PLANTS API
@@ -187,15 +231,17 @@ public class GameData : MonoBehaviour
         if (s == null) return;
 
         s.lastWateredDay = day;
+        s.missedWaterDays = 0;
 
-        // Ha hervadt volt és még nem semmisült meg, azonnal visszaállítjuk
         if (s.hasPlant && s.stage == PlantStage.Withered && s.prevStageBeforeWither.HasValue)
         {
             s.stage = s.prevStageBeforeWither.Value;
+            s.daysLeftInStage = ClampReviveDays(s.prevDaysLeftBeforeWither);
             s.prevStageBeforeWither = null;
-            s.missedWaterDays = 0;
+            s.prevDaysLeftBeforeWither = null;
         }
     }
+
 
     /// Az adott napon locsolva volt-e
     public bool IsWatered(string greenhouseId, string bedId, int day)
@@ -220,6 +266,36 @@ public class GameData : MonoBehaviour
         return true;
     }
 
+
+    // Megpróbáljuk kitalálni, melyik stádiumból hervadt el.
+    // A Withered-be kerüléskor NEM nullázzuk a daysLeftInStage-et, így az
+    // általában annak a stádiumidőnek a visszaszámlálója, amiben épp volt.
+    private PlantStage InferPrevStage(BedSave s)
+    {
+        var def = PlantDefById(s.plantDefId);
+        if (def == null) return PlantStage.Sapling; // safe fallback
+
+        // Ha már termő volt, onnan nem hervasztunk tovább – de biztos ami biztos:
+        // (általában a Fruitingnál daysLeftInStage = 0)
+        if (s.daysLeftInStage <= 0)
+        {
+            // ha 0, valószínűleg Mature-ból lépett volna Fruitingba, vagy már Fruiting volt
+            return PlantStage.Mature;
+        }
+
+        // Ha még sok nap volt hátra, valószínű Seed vagy Sapling állapotból jött.
+        // A határokat a definíciók idejéből számoljuk.
+        int toSapling = Mathf.Max(1, def.daysSeedToSapling);
+        int toMature = Mathf.Max(1, def.daysSaplingToMature);
+        int toFruiting = Mathf.Max(1, def.daysMatureToFruiting);
+
+        // Heurisztika: ha még nagy stádiumidő volt hátra, inkább az adott stádiumban maradjon.
+        // (Nem kritikus, csak hogy legyen értelmes visszaállítás.)
+        if (s.daysLeftInStage > toMature) return PlantStage.Seed;
+        if (s.daysLeftInStage > toFruiting) return PlantStage.Sapling;
+        return PlantStage.Mature;
+    }
+
     // -----------------------------
     // DAY TICK – növekedés / hervadás / megsemmisülés
     // -----------------------------
@@ -235,18 +311,32 @@ public class GameData : MonoBehaviour
 
                 bool wateredPrevDay = (s.lastWateredDay == newDay - 1);
 
+                // ---- NEM volt locsolva az előző napon ----
                 if (!wateredPrevDay)
                 {
-                    // Első száraz nap → Withered
+                    // Seed kivétel
+                    if (s.stage == PlantStage.Seed)
+                    {
+                        s.missedWaterDays = 0;
+                        continue;
+                    }
+
+                    // Első száraz nap -> Withered
                     if (s.stage != PlantStage.Withered)
                     {
-                        s.prevStageBeforeWither ??= s.stage;
+                        if (!s.prevStageBeforeWither.HasValue)
+                        {
+                            s.prevStageBeforeWither = s.stage;
+                            // mentjük a hátralévő napokat, de legalább 1-et
+                            s.prevDaysLeftBeforeWither = ClampReviveDays(s.daysLeftInStage);
+                        }
+
                         s.stage = PlantStage.Withered;
                         s.missedWaterDays = 1;
                     }
                     else
                     {
-                        // Második egymást követő száraz nap → megsemmisül
+                        // Második egymás utáni száraz nap -> megsemmisül
                         s.missedWaterDays++;
                         if (s.missedWaterDays >= 2)
                         {
@@ -255,6 +345,7 @@ public class GameData : MonoBehaviour
                             s.stage = PlantStage.Seed;
                             s.daysLeftInStage = 0;
                             s.prevStageBeforeWither = null;
+                            s.prevDaysLeftBeforeWither = null; // <<< töröljük
                             s.lastWateredDay = int.MinValue;
                             s.missedWaterDays = 0;
                         }
@@ -264,11 +355,19 @@ public class GameData : MonoBehaviour
                     continue;
                 }
 
-                // locsolva volt
+                // ---- locsolva volt az előző napon ----
                 s.missedWaterDays = 0;
-                if (s.stage == PlantStage.Withered) continue; // biztonság
 
-                // növekedés csak locsolt napon
+                // Ha withered és van mentett előző állapot: állítsuk vissza MOST
+                if (s.stage == PlantStage.Withered && s.prevStageBeforeWither.HasValue)
+                {
+                    s.stage = s.prevStageBeforeWither.Value;
+                    s.daysLeftInStage = ClampReviveDays(s.prevDaysLeftBeforeWither); // <<< napok vissza
+                    s.prevStageBeforeWither = null;
+                    s.prevDaysLeftBeforeWither = null;
+                }
+
+                // növekedés (csak locsolt napon)
                 if (s.daysLeftInStage > 0) s.daysLeftInStage--;
                 if (s.daysLeftInStage <= 0)
                 {
@@ -281,22 +380,26 @@ public class GameData : MonoBehaviour
                             s.stage = PlantStage.Sapling;
                             s.daysLeftInStage = Mathf.Max(1, def.daysSaplingToMature);
                             break;
+
                         case PlantStage.Sapling:
                             s.stage = PlantStage.Mature;
                             s.daysLeftInStage = Mathf.Max(1, def.daysMatureToFruiting);
                             break;
+
                         case PlantStage.Mature:
                             s.stage = PlantStage.Fruiting;
-                            s.daysLeftInStage = 0;
+                            s.daysLeftInStage = 0; // termő állapotban marad
                             break;
+
                         case PlantStage.Fruiting:
-                            // marad termő állapotban
+                            // marad termő
                             break;
                     }
                 }
             }
         }
     }
+
 
     // -----------------------------
     // BUILDINGS API

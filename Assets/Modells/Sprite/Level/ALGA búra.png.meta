@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      "ALGA b\xFAra_0": -1574369777828060904
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

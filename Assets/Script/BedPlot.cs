@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
 public class BedPlot : MonoBehaviour, IInteractable
@@ -10,14 +11,20 @@ public class BedPlot : MonoBehaviour, IInteractable
     [Header("Watering")]
     [SerializeField] float waterCostPerWatering = 10f;
 
-    PlantActor currentPlant;
-    string greenhouseIdCached;
-    string bedIdCached;
+    // --- LOGIKA: 1 növény ---
+    PlantActor currentPlant; // a KÖZÉPSŐ példány – ebből mentünk/olvasunk
 
-    // helyi cache: melyik napon lett utoljára locsolva
+    // --- VIZUÁL: 3 példány ugyanahhoz a növényhez ---
+    readonly List<PlantActor> visualPlants = new List<PlantActor>(3);
+
+    // TravelContext + lokális ágyás-azonosító -> kulcs
+    string greenhouseIdCached;
+    string bedKeyCached;       // pl. "GH_12ab3:A"
+    string localBedIdCached;   // pl. "A"
+
     int lastWateredDayLocal = int.MinValue;
 
-    // ========= UI-nak hasznos olvasók =========
+    // ========= UI helper =========
     public bool HasPlant => currentPlant != null;
     public bool IsFruiting => currentPlant != null && currentPlant.stage == PlantStage.Fruiting;
     public PlantDefinition CurrentDef => currentPlant ? currentPlant.def : null;
@@ -28,14 +35,26 @@ public class BedPlot : MonoBehaviour, IInteractable
         if (day < 0) return false;
         if (lastWateredDayLocal == day) return true;
         if (GameData.I == null || !KeysValid()) return false;
-        return GameData.I.IsWatered(greenhouseIdCached, bedIdCached, day);
+        return GameData.I.IsWatered(greenhouseIdCached, bedKeyCached, day);
     }
-    // ==========================================
+    // =============================
 
     void Awake()
     {
-        bedIdCached = GetComponent<StableId>()?.Id;
         greenhouseIdCached = TravelContext.currentGreenhouseId;
+        var bli = GetComponent<BedLocalId>();
+        localBedIdCached = bli ? bli.localId : name; // fallback: GameObject neve
+        RebuildBedKey();
+
+        if (!plantAnchor) plantAnchor = transform;
+    }
+
+    void RebuildBedKey()
+    {
+        if (!string.IsNullOrEmpty(greenhouseIdCached) && !string.IsNullOrEmpty(localBedIdCached))
+            bedKeyCached = $"{greenhouseIdCached}:{localBedIdCached}";
+        else
+            bedKeyCached = null;
     }
 
     int Today()
@@ -46,9 +65,9 @@ public class BedPlot : MonoBehaviour, IInteractable
 
     bool KeysValid()
     {
-        bool ok = !string.IsNullOrEmpty(bedIdCached) && !string.IsNullOrEmpty(greenhouseIdCached);
+        bool ok = !string.IsNullOrEmpty(greenhouseIdCached) && !string.IsNullOrEmpty(bedKeyCached);
         if (!ok)
-            UnityEngine.Debug.LogWarning($"[BedPlot] MISSING KEY(s) gh='{greenhouseIdCached}' bed='{bedIdCached}' on {name}");
+            Debug.LogWarning($"[BedPlot] MISSING KEY(s) gh='{greenhouseIdCached}' bedKey='{bedKeyCached}' on {name}");
         return ok;
     }
 
@@ -58,9 +77,9 @@ public class BedPlot : MonoBehaviour, IInteractable
         {
             int day = Today();
             if (day < 0) return false;
-            if (lastWateredDayLocal == day) return true; // azonnali lokális tiltás
+            if (lastWateredDayLocal == day) return true;
             if (GameData.I == null || !KeysValid()) return false;
-            return GameData.I.IsWatered(greenhouseIdCached, bedIdCached, day);
+            return GameData.I.IsWatered(greenhouseIdCached, bedKeyCached, day);
         }
     }
 
@@ -74,6 +93,7 @@ public class BedPlot : MonoBehaviour, IInteractable
     {
         if (string.IsNullOrEmpty(greenhouseIdCached))
             greenhouseIdCached = TravelContext.currentGreenhouseId;
+        RebuildBedKey();
 
         RestoreFromSave();
 
@@ -89,11 +109,72 @@ public class BedPlot : MonoBehaviour, IInteractable
 
     void OnNewDay(int day) => RestoreFromSave();
 
+    // ----------------- VIZUÁL HELPER-EK -----------------
+
+    void ClearVisuals()
+    {
+        visualPlants.Clear();
+        if (!plantAnchor) return;
+
+        // csak a növényeket töröljük az anchor alól
+        var toDestroy = new List<GameObject>();
+        foreach (Transform t in plantAnchor)
+            toDestroy.Add(t.gameObject);
+        foreach (var go in toDestroy)
+            Destroy(go);
+    }
+
+    void SpawnVisualPlants(PlantDefinition def, PlantStage stage, int daysLeft)
+    {
+        ClearVisuals();
+
+        // 3 fix offset: bal–közép–jobb
+        Vector3[] offsets = new[]
+        {
+            new Vector3(-0.8f, 0f, 0f),
+            Vector3.zero,
+            new Vector3( 0.8f, 0f, 0f)
+        };
+
+        for (int i = 0; i < 3; i++)
+        {
+            var go = new GameObject($"Plant_{i}");
+            go.transform.SetParent(plantAnchor, false);
+            go.transform.localPosition = offsets[i];
+
+            var sr = go.AddComponent<SpriteRenderer>();
+            if (soilRenderer) sr.sortingOrder = soilRenderer.sortingOrder + 1;
+
+            var actor = go.AddComponent<PlantActor>();
+            actor.Init(def);
+            ForcePlantState(actor, stage, daysLeft);
+
+            visualPlants.Add(actor);
+        }
+
+        // a középső legyen a "fő" példány (amivel mentünk)
+        currentPlant = visualPlants.Count >= 2 ? visualPlants[1] : visualPlants[0];
+    }
+
+    void MirrorFromCurrent()
+    {
+        if (currentPlant == null) return;
+        foreach (var actor in visualPlants)
+        {
+            if (actor == null || actor == currentPlant) continue;
+            // tükrözzük a stádiumot + hátralévő napokat
+            actor.def = currentPlant.def;
+            ForcePlantState(actor, currentPlant.stage, currentPlant.GetDaysLeftExternal());
+        }
+    }
+
+    // ----------------------------------------------------
+
     void RestoreFromSave()
     {
         if (GameData.I == null || !KeysValid()) return;
 
-        var s = GameData.I.GetOrCreateBed(greenhouseIdCached, bedIdCached);
+        var s = GameData.I.GetOrCreateBed(greenhouseIdCached, bedKeyCached);
         if (s == null) return;
 
         if (s.hasPlant && !string.IsNullOrEmpty(s.plantDefId))
@@ -101,31 +182,16 @@ public class BedPlot : MonoBehaviour, IInteractable
             var def = GameData.I.ResolveDef(s.plantDefId);
             if (def == null) return;
 
-            if (!currentPlant)
-            {
-                var go = new GameObject("Plant");
-                go.transform.SetParent(plantAnchor ? plantAnchor : transform, false);
-                var sr = go.AddComponent<SpriteRenderer>();
-                if (soilRenderer) sr.sortingOrder = soilRenderer.sortingOrder + 1;
+            // három vizuális példányt készítünk
+            SpawnVisualPlants(def, s.stage, s.daysLeftInStage);
 
-                currentPlant = go.AddComponent<PlantActor>();
-                currentPlant.Init(def);
-            }
-            else
-            {
-                currentPlant.def = def;
-            }
-
-            ForcePlantState(currentPlant, s.stage, s.daysLeftInStage);
             lastWateredDayLocal = s.lastWateredDay; // cache szinkron
         }
         else
         {
-            if (currentPlant)
-            {
-                Destroy(currentPlant.gameObject);
-                currentPlant = null;
-            }
+            // üres ágyás
+            ClearVisuals();
+            currentPlant = null;
         }
     }
 
@@ -152,7 +218,6 @@ public class BedPlot : MonoBehaviour, IInteractable
     public string GetPrompt()
     {
         if (currentPlant == null) return "Plant seed (E)";
-        // korábban itt “Harvest (E)” volt – most a status panel nyílik
         return "Open plant status (E)";
     }
 
@@ -160,7 +225,7 @@ public class BedPlot : MonoBehaviour, IInteractable
     {
         if (!player) return;
         var inv = player.GetComponent<PlayerInventory>();
-        if (!inv) { UnityEngine.Debug.LogWarning("[BedPlot] PlayerInventory missing."); return; }
+        if (!inv) { Debug.LogWarning("[BedPlot] PlayerInventory missing."); return; }
 
         // Ültetés – felugró választó
         if (!currentPlant)
@@ -182,89 +247,60 @@ public class BedPlot : MonoBehaviour, IInteractable
             {
                 if (pickedDef == null) return;
 
-                // PlantDefinition -> SeedItem, levonás
                 var seedItem = inv.FindSeedByDef(pickedDef);
-                if (seedItem == null)
-                {
-                    Debug.LogWarning("[BedPlot] SeedItem not found for picked PlantDefinition.");
-                    return;
-                }
-                if (!inv.ConsumeSeed(seedItem, 1))
-                {
-                    Debug.Log("[BedPlot] Out of that seed.");
-                    return;
-                }
+                if (seedItem == null) { Debug.LogWarning("[BedPlot] SeedItem not found for picked PlantDefinition."); return; }
+                if (!inv.ConsumeSeed(seedItem, 1)) { Debug.Log("[BedPlot] Out of that seed."); return; }
 
-                // Ültetés
-                var go = new GameObject("Plant");
-                go.transform.SetParent(plantAnchor ? plantAnchor : transform, false);
-                var sr = go.AddComponent<SpriteRenderer>();
-                if (soilRenderer) sr.sortingOrder = soilRenderer.sortingOrder + 1;
-
-                currentPlant = go.AddComponent<PlantActor>();
-                currentPlant.Init(pickedDef);
+                // LOGIKA + VIZUÁL: három példány azonnal
+                SpawnVisualPlants(pickedDef, PlantStage.Seed, Mathf.Max(1, pickedDef.daysSeedToSapling));
 
                 // Mentés + locsolás reset
                 WriteSave();
                 if (GameData.I != null && KeysValid())
                 {
                     lastWateredDayLocal = int.MinValue;
-                    GameData.I.MarkWatered(greenhouseIdCached, bedIdCached, int.MinValue);
+                    GameData.I.MarkWatered(greenhouseIdCached, bedKeyCached, int.MinValue);
                 }
             });
 
             return;
         }
 
-        // VAN növény: status panel ugrik fel
-        if (PlantStatusUI.Instance != null)
-        {
-            PlantStatusUI.Instance.ShowFor(this);
-        }
-        else
-        {
-            Debug.LogWarning("[BedPlot] PlantStatusUI.Instance is null – tedd a Canvasra és állítsd be a referenciáit.");
-        }
+        // VAN növény: status panel
+        if (PlantStatusUI.Instance != null) PlantStatusUI.Instance.ShowFor(this);
+        else Debug.LogWarning("[BedPlot] PlantStatusUI.Instance is null – tedd a Canvasra és állítsd be a referenciáit.");
     }
 
-    // UI -> “Water (F)” továbbra is külön actionről megy (PlayerInteractor.OnWater)
+    // Locsolás
     public void Water(PlayerStats player)
     {
         if (!player) return;
-
         var inv = player.GetComponent<PlayerInventory>();
-        if (!inv || !inv.HasWateringCan)
-        {
-            UnityEngine.Debug.Log("[BedPlot] You need a watering can.");
-            return;
-        }
+        if (!inv || !inv.HasWateringCan) { Debug.Log("[BedPlot] You need a watering can."); return; }
 
-        if (!currentPlant) { UnityEngine.Debug.Log("[BedPlot] Nothing to water."); return; }
-        if (WateredToday) { UnityEngine.Debug.Log("[BedPlot] Already watered today."); return; }
+        if (!currentPlant) { Debug.Log("[BedPlot] Nothing to water."); return; }
+        if (WateredToday) { Debug.Log("[BedPlot] Already watered today."); return; }
 
         float need = Mathf.Max(player.minWaterToWater, waterCostPerWatering);
-        if (!player.TryConsumeWater(need))
-        {
-            UnityEngine.Debug.Log("[BedPlot] Not enough water.");
-            return;
-        }
+        if (!player.TryConsumeWater(need)) { Debug.Log("[BedPlot] Not enough water."); return; }
 
         int day = Today();
 
         if (GameData.I != null && KeysValid())
         {
-            // Jelöljük, hogy MA locsoltunk
-            GameData.I.MarkWatered(greenhouseIdCached, bedIdCached, day);
+            GameData.I.MarkWatered(greenhouseIdCached, bedKeyCached, day);
 
-            // Ha Withered volt, próbáljuk azonnal életre hozni (mentés alapján)
-            if (GameData.I.TryReviveIfWithered(greenhouseIdCached, bedIdCached, out var revivedStage))
+            // If withered -> próbáljuk azonnal visszahozni
+            if (GameData.I.TryReviveIfWithered(greenhouseIdCached, bedKeyCached, out var revivedStage))
             {
-                // Vizuál azonnali frissítése
-                ForcePlantState(currentPlant, revivedStage, currentPlant.GetDaysLeftExternal());
+                var s = GameData.I.GetOrCreateBed(greenhouseIdCached, bedKeyCached);
+                int daysLeftFromSave = s != null ? s.daysLeftInStage : currentPlant.GetDaysLeftExternal();
+                ForcePlantState(currentPlant, revivedStage, daysLeftFromSave);
+                MirrorFromCurrent();
             }
         }
 
-        lastWateredDayLocal = day; // azonnali tiltás
+        lastWateredDayLocal = day;
         WriteSave();
     }
 
@@ -274,14 +310,13 @@ public class BedPlot : MonoBehaviour, IInteractable
     {
         if (!currentPlant) return;
 
-        Destroy(currentPlant.gameObject);
+        ClearVisuals();
         currentPlant = null;
 
-        // mentés: üres ágyás
         if (GameData.I != null && KeysValid())
         {
-            GameData.I.WritePlant(greenhouseIdCached, bedIdCached, null, PlantStage.Seed, 0);
-            GameData.I.MarkWatered(greenhouseIdCached, bedIdCached, int.MinValue);
+            GameData.I.WritePlant(greenhouseIdCached, bedKeyCached, null, PlantStage.Seed, 0);
+            GameData.I.MarkWatered(greenhouseIdCached, bedKeyCached, int.MinValue);
         }
         lastWateredDayLocal = int.MinValue;
     }
@@ -298,10 +333,10 @@ public class BedPlot : MonoBehaviour, IInteractable
             inv.AddProduce(type, amt);
         }
 
-        WriteSave(); // Mature + regrow napok mentése
+        // frissítsük a vizuálokat, majd írjuk ki a mentést
+        MirrorFromCurrent();
+        WriteSave();
     }
-
-    // ============================================
 
     void WriteSave()
     {
@@ -309,11 +344,11 @@ public class BedPlot : MonoBehaviour, IInteractable
 
         if (!currentPlant)
         {
-            GameData.I.WritePlant(greenhouseIdCached, bedIdCached, null, PlantStage.Seed, 0);
+            GameData.I.WritePlant(greenhouseIdCached, bedKeyCached, null, PlantStage.Seed, 0);
             return;
         }
 
         int daysLeft = currentPlant.GetDaysLeftExternal();
-        GameData.I.WritePlant(greenhouseIdCached, bedIdCached, currentPlant.def, currentPlant.stage, daysLeft);
+        GameData.I.WritePlant(greenhouseIdCached, bedKeyCached, currentPlant.def, currentPlant.stage, daysLeft);
     }
 }
