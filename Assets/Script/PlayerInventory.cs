@@ -92,9 +92,8 @@ public class PlayerInventory : MonoBehaviour
     }
 
     // === Watering Can support ===
-    WateringCan _carriedCan;
     public bool HasWateringCan => _carriedCan != null;
-    public WateringCan CurrentCan => _carriedCan;
+    private WateringCan _carriedCan;
 
     public bool TryTakeCan(WateringCan can)
     {
@@ -109,4 +108,6 @@ public class PlayerInventory : MonoBehaviour
         _carriedCan = null;
         return true;
     }
+
+    public WateringCan CurrentCan => _carriedCan;
 }

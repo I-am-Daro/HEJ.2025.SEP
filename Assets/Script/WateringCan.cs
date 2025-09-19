@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(Collider2D))]
-public class WateringCan : MonoBehaviour, IInteractable
+[DisallowMultipleComponent]
+public class WateringCan : MonoBehaviour
 {
     [Header("Carry settings")]
     public string handAnchorName = "HandAnchor";
@@ -12,18 +12,22 @@ public class WateringCan : MonoBehaviour, IInteractable
     public AudioClip pickupSfx;
     public AudioClip putdownSfx;
 
+    // --- state ---
+    public bool IsCarried { get; private set; }
+    public Transform CarrierAnchor { get; private set; }
+
     // --- cached ---
     Collider2D col;
     SpriteRenderer[] srs;
     int[] originalOrders;
 
-    // EREDETI (scene-ben lévő) állapot (ha nem adsz külön home anchor-t, ide rakjuk vissza)
+    // eredeti (scene) állapot
     Transform originalParent;
     Vector3 originalLocalPos;
     Quaternion originalLocalRot;
     Vector3 originalLocalScale;
 
-    // „Home” (ahová visszakerül) – általában a Station „CanAnchor”-ja
+    // “home” – általában a Station CanAnchor-ja
     Transform homeParent;
     Vector3 homeLocalPos;
     Quaternion homeLocalRot;
@@ -32,13 +36,14 @@ public class WateringCan : MonoBehaviour, IInteractable
     void Awake()
     {
         col = GetComponent<Collider2D>();
-        col.isTrigger = true;
+        if (col) col.isTrigger = true;
 
         srs = GetComponentsInChildren<SpriteRenderer>(true);
         if (srs != null)
         {
             originalOrders = new int[srs.Length];
-            for (int i = 0; i < srs.Length; i++) originalOrders[i] = srs[i].sortingOrder;
+            for (int i = 0; i < srs.Length; i++)
+                originalOrders[i] = srs[i].sortingOrder;
         }
 
         originalParent = transform.parent;
@@ -46,65 +51,20 @@ public class WateringCan : MonoBehaviour, IInteractable
         originalLocalRot = transform.localRotation;
         originalLocalScale = transform.localScale;
 
-        // Alapértelmezett „home”: a születéskori hely
+        // default home a születéskori hely
         homeParent = originalParent;
         homeLocalPos = originalLocalPos;
         homeLocalRot = originalLocalRot;
         homeLocalScale = originalLocalScale;
     }
 
-    // Station hívja beállításkor (ajánlott a Station CanAnchor-ját átadni)
+    // Station hívja a setuphoz
     public void ConfigureHome(Transform parent, Vector3 localPos, Quaternion localRot, Vector3 localScale)
     {
         homeParent = parent != null ? parent : originalParent;
         homeLocalPos = localPos;
         homeLocalRot = localRot;
         homeLocalScale = localScale == Vector3.zero ? Vector3.one : localScale;
-    }
-
-    public string GetPrompt() => "Pick up watering can (E)";
-
-    public void Interact(PlayerStats player)
-    {
-        if (!player) return;
-        var inv = player.GetComponent<PlayerInventory>();
-        if (!inv) return;
-        if (!inv.TryTakeCan(this)) return; // már van nála vagy nem ok
-
-        // kézbe tesszük
-        Transform anchor = FindOrMakeHandAnchor(player.transform, handAnchorName);
-        // FONTOS: a hand anchor-nak legyen unit scale, hogy ne torzítson
-        anchor.localScale = Vector3.one;
-
-        transform.SetParent(anchor, false);
-        transform.localPosition = carryLocalOffset;
-        transform.localRotation = Quaternion.identity;
-        transform.localScale = originalLocalScale; // tartsuk az eredeti skálát kézben is
-
-        if (col) col.enabled = false;
-
-        if (srs != null)
-            for (int i = 0; i < srs.Length; i++)
-                srs[i].sortingOrder = originalOrders[i] + carrySortingOrderBoost;
-
-        if (pickupSfx) AudioSource.PlayClipAtPoint(pickupSfx, player.transform.position);
-    }
-
-    public void PutBackHome()
-    {
-        // VISSZAÁLLÍTÁS: identitás-skálájú („CanAnchor”) szülő alá tesszük
-        transform.SetParent(homeParent, false); // false → lokális értékeket közvetlen állítjuk
-        transform.localPosition = homeLocalPos;
-        transform.localRotation = homeLocalRot;
-        transform.localScale = homeLocalScale;
-
-        if (col) col.enabled = true;
-
-        if (srs != null)
-            for (int i = 0; i < srs.Length; i++)
-                srs[i].sortingOrder = originalOrders[i];
-
-        if (putdownSfx) AudioSource.PlayClipAtPoint(putdownSfx, transform.position);
     }
 
     Transform FindOrMakeHandAnchor(Transform root, string name)
@@ -117,5 +77,50 @@ public class WateringCan : MonoBehaviour, IInteractable
         go.transform.localRotation = Quaternion.identity;
         go.transform.localScale = Vector3.one;
         return go.transform;
+    }
+
+    // ---- publikus API ----
+    public void PickUp(PlayerStats player, PlayerInventory inv)
+    {
+        if (IsCarried || player == null || inv == null) return;
+        if (!inv.TryTakeCan(this)) return; // ha már fog valamit, false
+
+        CarrierAnchor = FindOrMakeHandAnchor(player.transform, handAnchorName);
+        CarrierAnchor.localScale = Vector3.one; // ne torzítson
+
+        transform.SetParent(CarrierAnchor, false);
+        transform.localPosition = carryLocalOffset;
+        transform.localRotation = Quaternion.identity;
+        transform.localScale = originalLocalScale;
+
+        if (col) col.enabled = false;
+
+        if (srs != null)
+            for (int i = 0; i < srs.Length; i++)
+                srs[i].sortingOrder = originalOrders[i] + carrySortingOrderBoost;
+
+        if (pickupSfx) AudioSource.PlayClipAtPoint(pickupSfx, player.transform.position);
+
+        IsCarried = true;
+    }
+
+    public void PutBackHome()
+    {
+        // visszaállítás: identitás scale-ű anchor alá
+        transform.SetParent(homeParent, false);
+        transform.localPosition = homeLocalPos;
+        transform.localRotation = homeLocalRot;
+        transform.localScale = homeLocalScale;
+
+        if (col) col.enabled = true;
+
+        if (srs != null)
+            for (int i = 0; i < srs.Length; i++)
+                srs[i].sortingOrder = originalOrders[i];
+
+        if (putdownSfx) AudioSource.PlayClipAtPoint(putdownSfx, transform.position);
+
+        CarrierAnchor = null;
+        IsCarried = false;
     }
 }

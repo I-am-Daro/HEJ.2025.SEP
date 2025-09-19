@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Carrot Seed
   plant: {fileID: 11400000, guid: 190e73c4934dd9b46951e69ac995807e, type: 2}
-  icon: {fileID: -2413806693520163455, guid: c6ec36e49ed1bc64594b10766f7ee643, type: 3}
+  icon: {fileID: 5346928031986697999, guid: e32688dff71bf2640a4e771c0f28e8f7, type: 3}

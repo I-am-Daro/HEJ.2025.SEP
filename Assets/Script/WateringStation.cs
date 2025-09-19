@@ -1,4 +1,4 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
 public class WateringStation : MonoBehaviour, IInteractable
@@ -6,14 +6,14 @@ public class WateringStation : MonoBehaviour, IInteractable
     [Header("Refs")]
     public WateringCan can;
 
-    [Header("Anchor (scale=1,1,1!)")]
-    public Transform placeAnchor;                 // IDE tegy¸k vissza a kann·t
+    [Header("Anchor (scale = 1,1,1!)")]
+    public Transform placeAnchor;                 // IDE tessz√ºk vissza a kann√°t
     public Vector3 canLocalPosition = Vector3.zero;
     public Vector3 canLocalEulerAngles = Vector3.zero;
     public Vector3 canLocalScale = Vector3.one;
 
     [Header("Prompts")]
-    public string promptWhenEmpty = "This is the water station";
+    public string promptWhenEmpty = "Take watering can (E)";
     public string promptWhenCarrying = "Put back watering can (E)";
 
     void Awake()
@@ -21,8 +21,7 @@ public class WateringStation : MonoBehaviour, IInteractable
         var col = GetComponent<Collider2D>();
         col.isTrigger = true;
 
-        // Ha nincs anchor be·llÌtva, hozzunk lÈtre egyet UNIT sk·l·val,
-        // hogy a kann·t SOHA ne torzÌtsa a parent sk·l·ja.
+        // ha nincs anchor, hozzunk l√©tre unit-scale anchor-t
         if (placeAnchor == null)
         {
             var anchor = new GameObject("CanAnchor");
@@ -36,13 +35,11 @@ public class WateringStation : MonoBehaviour, IInteractable
 
     void Start()
     {
-        // ·llÌtsuk be a kanna Ñhomeî-j·t az anchorra
         if (can != null)
         {
             var rot = Quaternion.Euler(canLocalEulerAngles);
             can.ConfigureHome(placeAnchor, canLocalPosition, rot, canLocalScale);
-            // indul·skor biztos ami biztos: tegy¸k a helyÈre a kann·t
-            can.PutBackHome();
+            can.PutBackHome(); // indul√°skor a hely√©re tessz√ºk
         }
         else
         {
@@ -54,22 +51,38 @@ public class WateringStation : MonoBehaviour, IInteractable
     {
         var player = FindAnyObjectByType<PlayerStats>();
         var inv = player ? player.GetComponent<PlayerInventory>() : null;
-        if (inv && inv.HasWateringCan) return promptWhenCarrying;
+
+        if (inv != null && inv.HasWateringCan) return promptWhenCarrying;
         return promptWhenEmpty;
     }
 
     public void Interact(PlayerStats player)
     {
-        if (!player) return;
+        if (!player || can == null) return;
+
         var inv = player.GetComponent<PlayerInventory>();
         if (!inv) return;
 
-        if (inv.HasWateringCan && inv.CurrentCan != null)
+        // Ha n√°la van KANN√ÅJA ‚Üí tegy√ºk vissza (csak a SAJ√ÅT kann√°nkat fogadjuk vissza)
+        if (inv.HasWateringCan)
         {
-            var c = inv.CurrentCan;
-            if (!inv.TryReturnCan(c)) return;
+            var carried = inv.CurrentCan;
+            if (carried == null) return;
 
-            c.PutBackHome();  // <<< SK¡L¡Z¡S-SP”ILER: sosem torzul, mert az anchor scale=1
+            // Ha m√°st visz (nem ennek a stationnek a kann√°j√°t), akkor is visszarakjuk ezt a station ‚Äòcan‚Äô-j√©t?
+            // D√∂nt√©s: kiz√°r√≥lag a SAJ√ÅT can-t fogadjuk vissza:
+            if (carried != can) return;
+
+            if (!inv.TryReturnCan(can)) return;
+            can.PutBackHome();
+            return;
+        }
+
+        // Ha nincs n√°la ‚Üí vegye fel EBB≈êL az √°llom√°sb√≥l
+        // (Csak akkor engedj√ºk, ha a can t√©nyleg n√°lunk van √©s nincs √©pp k√©zben)
+        if (!can.IsCarried)
+        {
+            can.PickUp(player, inv);
         }
     }
 }
