@@ -8,13 +8,14 @@ public class PlantStatusUI : MonoBehaviour
     public static PlantStatusUI Instance { get; private set; }
 
     [Header("Refs")]
-    [SerializeField] GameObject root;          // panel gyökér (SetActive on/off)
+    [SerializeField] GameObject root;               // panel gyökér (SetActive on/off)
     [SerializeField] TextMeshProUGUI titleText;     // növény neve
-    [SerializeField] TextMeshProUGUI produceText;   // O2 / Food
+    [SerializeField] TextMeshProUGUI produceText;   // Produces: O2 / Food / Iron
     [SerializeField] TextMeshProUGUI wateredText;   // Watered today: Yes/No
+    [SerializeField] TextMeshProUGUI stageText;     // <<< ÚJ: Stage: Seed/Sapling/Mature/Fruiting/Withered
     [SerializeField] Button destroyButton;
     [SerializeField] Button closeButton;
-    [SerializeField] Button harvestButton;      // opcionális, csak Fruitingnál látszik
+    [SerializeField] Button harvestButton;          // csak Fruitingnál látszik
 
     BedPlot boundPlot;
 
@@ -40,14 +41,42 @@ public class PlantStatusUI : MonoBehaviour
         boundPlot = plot;
         var def = plot.CurrentDef;
 
+        // Cím
         if (titleText) titleText.text = def ? def.displayName : "Unknown plant";
-        if (produceText) produceText.text = def
-            ? (def.produceType == ProduceType.Oxygen ? "Produces: O₂" : "Produces: Food")
-            : "Produces: -";
 
-        if (wateredText) wateredText.text = plot.IsWateredToday()
-            ? "Watered today: Yes"
-            : "Watered today: No";
+        // Termék típus (Oxygen / Food / Iron)
+        if (produceText)
+        {
+            if (!def)
+            {
+                produceText.text = "Produces: -";
+            }
+            else
+            {
+                string prod = def.produceType switch
+                {
+                    ProduceType.Oxygen => "O₂",
+                    ProduceType.Food => "Food",
+                    ProduceType.Iron => "Iron",
+                    _ => "Unknown"
+                };
+                produceText.text = $"Produces: {prod}";
+            }
+        }
+
+        // Napi locsolás
+        if (wateredText)
+            wateredText.text = plot.IsWateredToday()
+                ? "Watered today: Yes"
+                : "Watered today: No";
+
+        // Fázis kiírás: közvetlenül megpróbáljuk kiolvasni a PlantActor-ból
+        if (stageText)
+        {
+            var actor = plot.GetComponentInChildren<PlantActor>(true);
+            string stageStr = actor ? PrettyStage(actor.stage) : "Unknown";
+            stageText.text = $"Stage: {stageStr}";
+        }
 
         // Harvest gomb csak, ha termő állapotban van
         if (harvestButton) harvestButton.gameObject.SetActive(plot.IsFruiting);
@@ -73,5 +102,19 @@ public class PlantStatusUI : MonoBehaviour
         if (!boundPlot) { Hide(); return; }
         boundPlot.HarvestFromUI();
         Hide();
+    }
+
+    // --- helpers ---
+    string PrettyStage(PlantStage s)
+    {
+        return s switch
+        {
+            PlantStage.Seed => "Seed",
+            PlantStage.Sapling => "Sapling",
+            PlantStage.Mature => "Mature",
+            PlantStage.Fruiting => "Fruiting",
+            PlantStage.Withered => "Withered",
+            _ => s.ToString()
+        };
     }
 }

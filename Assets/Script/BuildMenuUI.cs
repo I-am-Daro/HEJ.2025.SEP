@@ -7,8 +7,8 @@ public class BuildMenuUI : MonoBehaviour
 {
     public static BuildMenuUI I { get; private set; }
 
-    [SerializeField] GameObject root;       // panel gyökér
-    [SerializeField] Transform listParent;  // ScrollView Content
+    [SerializeField] GameObject root;
+    [SerializeField] Transform listParent;
     [SerializeField] Button itemButtonPrefab;
 
     void Awake()
@@ -30,12 +30,18 @@ public class BuildMenuUI : MonoBehaviour
             if (img) img.sprite = d.icon;
 
             var label = b.GetComponentInChildren<TextMeshProUGUI>();
-            if (label) label.text = d.displayName;
+            if (label)
+            {
+                // név + (X Iron) ha van költség
+                label.text = d.ironCost > 0
+                    ? $"{d.displayName}  ({d.ironCost} Iron)"
+                    : d.displayName;
+            }
 
             b.onClick.AddListener(() => {
                 Hide();
                 if (BuildManager.I == null) { Debug.LogError("BuildManager not found"); return; }
-                BuildManager.I.Pick(d);     // <- ezt hívjuk
+                BuildManager.I.Pick(d);
             });
         }
 

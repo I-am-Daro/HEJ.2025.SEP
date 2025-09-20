@@ -23,7 +23,7 @@ public class PlatformerController2D : MonoBehaviour
 
     [Header("Footsteps (INTERIOR)")]
     [SerializeField] AudioSource footstepSource;
-    [SerializeField] AudioClip[] footstepClips;         // beltéri/lépcsõ/fém stb.
+    [SerializeField] AudioClip[] footstepClips;
     [SerializeField, Range(0.1f, 1.0f)] float stepIntervalBase = 0.42f;
     [SerializeField] float stepPitchMin = 0.95f;
     [SerializeField] float stepPitchMax = 1.08f;
@@ -37,6 +37,10 @@ public class PlatformerController2D : MonoBehaviour
     float stepTimer;
     int lastClipIndex = -1;
 
+    // animator param cache
+    bool hasIsMovingParam;
+    bool hasSpeedParam;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -46,6 +50,24 @@ public class PlatformerController2D : MonoBehaviour
         if (!spriteRenderer) spriteRenderer = GetComponentInChildren<SpriteRenderer>(true);
         if (!animator) animator = GetComponentInChildren<Animator>(true);
 
+        // Egyszeri ellenõrzés: léteznek-e a megadott paraméterek?
+        if (animator)
+        {
+            hasIsMovingParam = !string.IsNullOrEmpty(isMovingParam) &&
+                               AnimatorHasParam(animator, isMovingParam, AnimatorControllerParameterType.Bool);
+
+            hasSpeedParam = !string.IsNullOrEmpty(speedParam) &&
+                            AnimatorHasParam(animator, speedParam, AnimatorControllerParameterType.Float);
+
+            if (!hasIsMovingParam && !string.IsNullOrEmpty(isMovingParam))
+                Debug.LogWarning($"[PlatformerController2D] Animator param '{isMovingParam}' (Bool) nem található. " +
+                                 $"Állítsd be az Animatorban vagy hagyd üresen az inspectorban.");
+
+            if (!hasSpeedParam && !string.IsNullOrEmpty(speedParam))
+                Debug.LogWarning($"[PlatformerController2D] Animator param '{speedParam}' (Float) nem található. " +
+                                 $"Állítsd be az Animatorban vagy hagyd üresen az inspectorban.");
+        }
+
         if (!footstepSource)
         {
             footstepSource = gameObject.AddComponent<AudioSource>();
@@ -54,6 +76,13 @@ public class PlatformerController2D : MonoBehaviour
             footstepSource.spatialBlend = 0f;
             footstepSource.volume = 1f;
         }
+    }
+
+    static bool AnimatorHasParam(Animator anim, string paramName, AnimatorControllerParameterType type)
+    {
+        foreach (var p in anim.parameters)
+            if (p.type == type && p.name == paramName) return true;
+        return false;
     }
 
     void OnDisable()
@@ -85,7 +114,7 @@ public class PlatformerController2D : MonoBehaviour
 
     bool IsGrounded()
     {
-        if (!groundCheck) return true; // ha nincs megadva, ne némítsuk emiatt
+        if (!groundCheck) return true;
         return Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundMask);
     }
 
@@ -95,8 +124,8 @@ public class PlatformerController2D : MonoBehaviour
 
         if (animator)
         {
-            if (!string.IsNullOrEmpty(isMovingParam)) animator.SetBool(isMovingParam, moving);
-            if (!string.IsNullOrEmpty(speedParam)) animator.SetFloat(speedParam, absVX);
+            if (hasIsMovingParam) animator.SetBool(isMovingParam, moving);
+            if (hasSpeedParam) animator.SetFloat(speedParam, absVX);
         }
 
         if (spriteRenderer && Mathf.Abs(vx) > 0.01f)
@@ -108,11 +137,9 @@ public class PlatformerController2D : MonoBehaviour
         if (footstepClips == null || footstepClips.Length == 0 || footstepSource == null)
             return;
 
-        // 1) csak WALK anim alatt
-        bool animSaysMoving = animator && !string.IsNullOrEmpty(isMovingParam) && animator.GetBool(isMovingParam);
-
-        // 2) Talajon legyünk, és fallback ha nincs animator
-        bool movingFallback = (animator == null || string.IsNullOrEmpty(isMovingParam)) &&
+        // csak WALK anim alatt (ha van ilyen param), különben fallback sebesség/grounded alapján
+        bool animSaysMoving = animator && hasIsMovingParam && animator.GetBool(isMovingParam);
+        bool movingFallback = (!animator || !hasIsMovingParam) &&
                               grounded && horizontalSpeed >= minHorizontalSpeedForStep;
 
         bool shouldStep = (animSaysMoving && grounded) || movingFallback;
@@ -139,8 +166,7 @@ public class PlatformerController2D : MonoBehaviour
         if (footstepClips.Length == 1) idx = 0;
         else
         {
-            do { idx = Random.Range(0, footstepClips.Length); }
-            while (idx == lastClipIndex);
+            do { idx = Random.Range(0, footstepClips.Length); } while (idx == lastClipIndex);
         }
         lastClipIndex = idx;
 

@@ -1020,9 +1020,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handAnchorName: HandAnchor
   carryLocalOffset: {x: 0, y: 0, z: 0}
+  mirrorOffsetOnFlip: 1
   carrySortingOrderBoost: 10
-  pickupSfx: {fileID: 0}
-  putdownSfx: {fileID: 0}
+  animator: {fileID: 0}
+  isWateringParam: IsWatering
+  wateringAudio: {fileID: 0}
+  loopWaterClip: {fileID: 0}
+  oneShotWaterClip: {fileID: 0}
+  waterVolume: 0.9
+  waterPitch: 1
 --- !u!61 &1670904750
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1376,6 +1382,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1960829358}
     m_Modifications:
+    - target: {fileID: -8610889663975249089, guid: 4853e69232d66bc4eb3af9941949d3af, type: 3}
+      propertyPath: localId
+      value: B
+      objectReference: {fileID: 0}
     - target: {fileID: 2487294706022533920, guid: 4853e69232d66bc4eb3af9941949d3af, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.61

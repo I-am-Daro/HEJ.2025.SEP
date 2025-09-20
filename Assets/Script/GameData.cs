@@ -61,6 +61,55 @@ public class GameData : MonoBehaviour
     // Exteriorban lerakott épületek
     public readonly List<PlacedBuilding> exteriorBuildings = new List<PlacedBuilding>();
 
+    [System.Serializable]
+    public class IronRespawnSave
+    {
+        public bool available;       // elérhető-e a pickup (látszik-e)
+        public int nextAvailableDay; // mikor spawnol újra; int.MinValue = most elérhető
+    }
+    // StableId -> respawn állapot
+    private readonly Dictionary<string, IronRespawnSave> ironRespawns = new();
+
+    // --- PERSIST API az IronPickup-hoz ---
+
+    /// Mentett állapot lekérése. Visszatér true, ha találtunk mentést.
+    public bool TryGetIronRespawn(string stableId, out bool available, out int nextAvailableDay)
+    {
+        available = true;
+        nextAvailableDay = int.MinValue;
+
+        if (string.IsNullOrEmpty(stableId)) return false;
+        if (ironRespawns.TryGetValue(stableId, out var s) && s != null)
+        {
+            available = s.available;
+            nextAvailableDay = s.nextAvailableDay;
+            return true;
+        }
+        return false;
+    }
+
+    /// Mentés/overwrite az adott StableId-hez.
+    public void WriteIronRespawn(string stableId, bool available, int nextAvailableDay)
+    {
+        if (string.IsNullOrEmpty(stableId)) return;
+
+        if (!ironRespawns.TryGetValue(stableId, out var s) || s == null)
+        {
+            s = new IronRespawnSave();
+            ironRespawns[stableId] = s;
+        }
+        s.available = available;
+        s.nextAvailableDay = nextAvailableDay;
+    }
+
+    /// Teljes törlés (pl. ha destroy-olod a pickupot).
+    public void ClearIronRespawn(string stableId)
+    {
+        if (string.IsNullOrEmpty(stableId)) return;
+        ironRespawns.Remove(stableId);
+    }
+
+
     // -----------------------------
     // DAY MIRROR
     // -----------------------------

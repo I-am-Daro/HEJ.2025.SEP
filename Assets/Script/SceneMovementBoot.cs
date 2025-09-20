@@ -18,15 +18,19 @@ public class SceneMovementBoot : MonoBehaviour
         var move = player.GetComponent<PlayerMovementService>();
         if (!move) return;
 
+        // A jelenet megmondja, mi engedett:
+        move.SetSceneAuthority(sceneKind);
+
         if (sceneKind == SceneKind.Interior)
         {
             move.Apply(MoveMode.InteriorSide);
-            player.transform.localScale = interiorScale;  // nagyobb belül
+            player.transform.localScale = interiorScale;
         }
         else
         {
+            // Exterior: top-down (ZeroG zóna majd felülírhatja ZeroG-re, ami engedett)
             move.Apply(MoveMode.ExteriorTopDown);
-            player.transform.localScale = exteriorScale;  // kisebb kívül
+            player.transform.localScale = exteriorScale;
         }
     }
 }

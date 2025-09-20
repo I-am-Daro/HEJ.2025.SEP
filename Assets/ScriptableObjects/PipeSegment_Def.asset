@@ -17,11 +17,11 @@ MonoBehaviour:
   icon: {fileID: 7482667652216324306, guid: d6c7574b9081e3f4b973cc8fed9da0cb, type: 3}
   prefab: {fileID: 2571914325048733067, guid: 4e38c0b4bef92a1478a8c25fa8091da7, type: 3}
   size: {x: 1, y: 1}
-  canRotate: 1
   blockMask:
     serializedVersion: 2
     m_Bits: 128
-  requiresPower: 0
-  isPipeSegment: 1
-  oxygenCost: 1
-  foodCost: 1
+  canRotate: 1
+  forbidNearTagged: 0
+  nearTag: Spaceship
+  minDistance: 6
+  ironCost: 2

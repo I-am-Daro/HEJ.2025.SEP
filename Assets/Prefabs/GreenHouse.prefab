@@ -253,7 +253,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isSource: 0
   isConduit: 1
-  linkRadius: 3
+  linkRadius: 1.8
   connectedToSource: 0
 --- !u!114 &1593145380476220974
 MonoBehaviour:
