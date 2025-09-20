@@ -6,6 +6,7 @@ public class HUDInventoryView : MonoBehaviour
     [SerializeField] PlayerInventory inventory;        // Playeren lévõ
     [SerializeField] TextMeshProUGUI oxygenText;       // "O2: 12"
     [SerializeField] TextMeshProUGUI foodText;         // "Food: 7"
+    [SerializeField] TextMeshProUGUI ironText;         // <<< ÚJ: "Iron: 15"
 
     void OnEnable()
     {
@@ -26,5 +27,6 @@ public class HUDInventoryView : MonoBehaviour
         if (!inventory) return;
         if (oxygenText) oxygenText.text = $"O2  {inventory.oxygenUnits}";
         if (foodText) foodText.text = $"Food  {inventory.foodUnits}";
+        if (ironText) ironText.text = $"Iron  {inventory.ironUnits}";
     }
 }

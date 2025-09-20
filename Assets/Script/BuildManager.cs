@@ -19,12 +19,25 @@ public class BuildManager : MonoBehaviour
     [Header("Optional")]
     public string ghostLayerName = "Ghost";
 
+    [Header("Build rules")]
+    [Tooltip("Ha be van kapcsolva: csak GravityBubble zónán belül lehet építkezni.")]
+    public bool requireGravityBubble = true;
+
+    [Tooltip("Csak az üvegházra érvényes tiltott sugár a hajó körül.")]
+    public float greenhouseNoBuildRadius = 5f;
+
+    [Tooltip("A hajót jelölő tag (a no-build kör meghatározásához).")]
+    public string spaceshipTag = "Spaceship";
+
     Camera cam;
     BuildingDefinition currentDef;
     GameObject ghost;
     SpriteRenderer[] ghostSprites;
     float rotZ;
     int ghostLayer = -1;
+
+    // <<< ÚJ: játékos inv cache az ár-ellenőrzéshez >>>
+    PlayerInventory cachedInv;
 
     void Awake()
     {
@@ -37,7 +50,6 @@ public class BuildManager : MonoBehaviour
             if (id >= 0) ghostLayer = id;
         }
 
-        // Scene váltáskor újra keressük a kamerát
         SceneManager.sceneLoaded += OnSceneLoaded;
         SceneManager.activeSceneChanged += OnActiveSceneChanged;
     }
@@ -52,23 +64,29 @@ public class BuildManager : MonoBehaviour
         }
     }
 
-
     void Start()
     {
         cam = Camera.main ? Camera.main : FindFirstObjectByType<Camera>();
         if (!cam) Debug.LogError("[BuildManager] No camera found.");
         RefreshCamera();
+        RefreshInventoryCache();
     }
 
-    void OnSceneLoaded(Scene s, LoadSceneMode m) => RefreshCamera();
-    void OnActiveSceneChanged(Scene prev, Scene next) => RefreshCamera();
+    void OnSceneLoaded(Scene s, LoadSceneMode m)
+    {
+        RefreshCamera();
+        RefreshInventoryCache();
+    }
+
+    void OnActiveSceneChanged(Scene prev, Scene next)
+    {
+        RefreshCamera();
+        RefreshInventoryCache();
+    }
 
     void RefreshCamera()
     {
-        // 1) próbáljuk a MainCamera taget
         cam = Camera.main;
-
-        // 2) ha még sincs, keressünk bármilyen aktív kamerát
         if (cam == null)
         {
             var cams = FindObjectsByType<Camera>(FindObjectsSortMode.None);
@@ -77,17 +95,20 @@ public class BuildManager : MonoBehaviour
                 if (c != null && c.isActiveAndEnabled) { cam = c; break; }
             }
         }
-
-        // 3) ha még mindig nincs, várunk – Update-ben újra próbálunk
         if (cam == null)
             Debug.LogWarning("[BuildManager] No active camera found in scene. Ghost will stick at (0,0,0) until a camera appears.");
+    }
+
+    void RefreshInventoryCache()
+    {
+        // egyetlen játékos van → elég egyszer becache-elni
+        cachedInv = FindFirstObjectByType<PlayerInventory>();
     }
 
     void Update()
     {
         if (currentDef == null || ghost == null) return;
 
-        // scene-váltás után lehet, hogy még nincs kamera – próbáljuk újra
         if (cam == null || !cam.isActiveAndEnabled) RefreshCamera();
         if (cam == null) return;
 
@@ -121,28 +142,78 @@ public class BuildManager : MonoBehaviour
         return cam.ScreenToWorldPoint(v);
     }
 
+    bool HasEnoughIron(BuildingDefinition def)
+    {
+        if (def == null || def.ironCost <= 0) return true; // nincs költség
+        if (!cachedInv) RefreshInventoryCache();
+        return cachedInv != null && cachedInv.HasIron(def.ironCost);
+    }
+
     bool IsValid(Vector3 pos, float rot, BuildingDefinition def)
     {
+        // 0) GravityBubble szabály
+        if (requireGravityBubble && !GravityBubble.AnyContains(pos))
+            return false;
+
+        // 0.5) Van-e elég Iron a játékosnál?
+        if (!HasEnoughIron(def))
+            return false;
+
+        // 1) blokk ütközés
         var hits = Physics2D.OverlapBoxAll(pos, def.size, rot, def.blockMask);
-        return hits == null || hits.Length == 0;
+        if (hits != null && hits.Length > 0) return false;
+
+        // 2) def szerinti távolságszabály
+        if (def.forbidNearTagged && !string.IsNullOrEmpty(def.nearTag) && def.minDistance > 0f)
+        {
+            var targets = GameObject.FindGameObjectsWithTag(def.nearTag);
+            for (int i = 0; i < targets.Length; i++)
+            {
+                var t = targets[i];
+                if (!t) continue;
+                float d = Vector2.Distance(pos, t.transform.position);
+                if (d < def.minDistance) return false;
+            }
+        }
+
+        // 3) csak Greenhouse: no-build kör a hajó körül
+        if (def != null && def.id == "Greenhouse" && greenhouseNoBuildRadius > 0.01f)
+        {
+            var ship = GameObject.FindGameObjectWithTag(spaceshipTag);
+            if (ship != null)
+            {
+                float d = Vector2.Distance(pos, ship.transform.position);
+                if (d < greenhouseNoBuildRadius) return false;
+            }
+        }
+
+        return true;
     }
 
     void Place(Vector3 pos, float rot, BuildingDefinition def)
     {
         if (!def || !def.prefab) { Debug.LogError("Place: missing prefab"); return; }
 
+        // Biztonsági ellenőrzés: költség levonása
+        if (def.ironCost > 0)
+        {
+            if (!cachedInv) RefreshInventoryCache();
+            if (cachedInv == null || !cachedInv.SpendIron(def.ironCost))
+            {
+                Debug.LogWarning($"[Build] Not enough Iron to place {def.displayName} (cost: {def.ironCost}).");
+                return;
+            }
+        }
+
         var go = Instantiate(def.prefab, pos, Quaternion.Euler(0, 0, rot));
         go.name = def.displayName;
 
-        // Stabil ID – mindig ÚJ az instance-nek
         var sid = StableId.AddTo(go);
         sid.AssignNewRuntimeId();
         string id = sid.Id;
 
-        // Mentés (a Te GameData-dba)
         GameData.I?.RegisterPlaced(id, def.id, pos, rot);
 
-        // Hálózat: ha vannak node-ok, azonnal számoljuk újra
         var anyNode = go.GetComponentInChildren<PowerNode>(true);
         if (anyNode) PowerGrid.I?.Rebuild();
     }
@@ -155,7 +226,6 @@ public class BuildManager : MonoBehaviour
         ghostSprites = null;
         rotZ = 0f;
 
-        // takarítás / friss áramháló újraszámolása
         PowerGrid.I?.Rebuild();
     }
 
@@ -181,7 +251,6 @@ public class BuildManager : MonoBehaviour
         ghost.name = $"GHOST_{def.displayName}";
         rotZ = 0f;
 
-        // JELÖLÉS: ez egy ghost példány
         ghost.AddComponent<GhostMarker>();
 
         if (ghostLayer >= 0) SetLayerRecursive(ghost, ghostLayer);
@@ -197,7 +266,6 @@ public class BuildManager : MonoBehaviour
 
         SetGhostColor(okColor);
     }
-
 
     void SetGhostColor(Color c)
     {

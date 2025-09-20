@@ -1,21 +1,39 @@
 using UnityEngine;
 
+[DisallowMultipleComponent]
 public class ExteriorModeGuard : MonoBehaviour
 {
+    [SerializeField] bool logCorrections = false;
+
+    ZeroGOverlapTracker tracker;
+    PlayerMovementService move;
+    PlayerStats stats;
+
+    void Awake()
+    {
+        tracker = GetComponent<ZeroGOverlapTracker>();
+        move = GetComponent<PlayerMovementService>();
+        stats = GetComponent<PlayerStats>();
+    }
+
     void LateUpdate()
     {
-        var p = GameObject.FindGameObjectWithTag("Player");
-        if (!p) return;
+        if (!move) return;
 
-        var svc = p.GetComponent<PlayerMovementService>();
-        var stats = p.GetComponent<PlayerStats>();
-        if (!svc) return;
+        // Csak exterior mozgásmódoknál õrködünk
+        if (move.CurrentMode != MoveMode.ExteriorTopDown &&
+            move.CurrentMode != MoveMode.ZeroG)
+            return;
 
-        var desired = (stats && stats.isZeroG) ? MoveMode.ZeroG : MoveMode.ExteriorTopDown;
-        if (svc.CurrentMode != desired)
+        bool shouldZeroG = tracker ? tracker.IsZeroG : true; // ha nincs tracker, inkább ZeroG
+        bool isZeroGMode = (move.CurrentMode == MoveMode.ZeroG);
+
+        if (shouldZeroG != isZeroGMode)
         {
-            svc.Apply(desired);
-            Debug.LogWarning($"[ExteriorModeGuard] Corrected movement back to {desired}.");
+            if (stats) stats.isZeroG = shouldZeroG;
+            move.Apply(shouldZeroG ? MoveMode.ZeroG : MoveMode.ExteriorTopDown);
+            if (logCorrections)
+                Debug.LogWarning($"[ExteriorModeGuard] Corrected movement to {(shouldZeroG ? "ZeroG" : "TopDown")}");
         }
     }
 }

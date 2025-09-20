@@ -1,17 +1,29 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Defs/Building")]
+[CreateAssetMenu(menuName = "Defs/Building", fileName = "Building_")]
 public class BuildingDefinition : ScriptableObject
 {
-    public string id;                 // pl. "greenhouse"
+    [Header("Identity")]
+    public string id;
     public string displayName;
-    public Sprite icon;
+    public Sprite icon;                 // BuildMenuUI ezt használja
 
+    [Header("Prefab")]
     public GameObject prefab;
-    public Vector2 size = Vector2.one;
-    public bool canRotate = true;
-    public bool requiresPower = false;
-    public bool isPipeSegment = false;
 
-    public LayerMask blockMask;
+    [Header("Placement")]
+    public Vector2 size = Vector2.one;
+    public LayerMask blockMask = ~0;
+    public bool canRotate = true;
+
+    // --- Opcionális no-build szabály ---
+    [Header("No-build rule (optional)")]
+    public bool forbidNearTagged = false;
+    public string nearTag = "Spaceship";
+    public float minDistance = 6f;
+
+    // --- KÖLTSÉG ---
+    [Header("Cost")]
+    [Tooltip("Mennyibe kerül Iron-ban a lerakás (0 = ingyen).")]
+    public int ironCost = 0;
 }
