@@ -142,9 +142,9 @@ TextureImporter:
       name: Carrot_0
       rect:
         serializedVersion: 2
-        x: 18
+        x: 0
         y: 0
-        width: 27
+        width: 64
         height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -164,7 +164,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: cb08d90bbaa5ea1428c426f86fe3312f
     internalID: 0
     vertices: []
     indices: 

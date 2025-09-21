@@ -23,5 +23,5 @@ MonoBehaviour:
   canRotate: 1
   forbidNearTagged: 1
   nearTag: Spaceship
-  minDistance: 5
+  minDistance: 1
   ironCost: 50
