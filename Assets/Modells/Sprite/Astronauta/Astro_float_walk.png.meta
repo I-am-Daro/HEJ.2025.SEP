@@ -151,12 +151,12 @@ TextureImporter:
       name: Astro_float_walk_0
       rect:
         serializedVersion: 2
-        x: 3
-        y: 1
-        width: 50
-        height: 63
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 4
+        y: 0
+        width: 48
+        height: 64
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -173,12 +173,12 @@ TextureImporter:
       name: Astro_float_walk_1
       rect:
         serializedVersion: 2
-        x: 64
+        x: 65
         y: 0
-        width: 53
+        width: 51
         height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -195,12 +195,12 @@ TextureImporter:
       name: Astro_float_walk_2
       rect:
         serializedVersion: 2
-        x: 127
-        y: 1
-        width: 54
-        height: 63
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 128
+        y: 0
+        width: 52
+        height: 64
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -217,12 +217,12 @@ TextureImporter:
       name: Astro_float_walk_3
       rect:
         serializedVersion: 2
-        x: 194
-        y: 1
-        width: 51
-        height: 63
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 195
+        y: 0
+        width: 49
+        height: 64
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -239,7 +239,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 79c28f062b72dd14e9bfd2f54e1fe1d0
     internalID: 0
     vertices: []
     indices: 

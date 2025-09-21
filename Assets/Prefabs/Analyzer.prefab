@@ -12,9 +12,11 @@ GameObject:
   - component: {fileID: 2333946138936901396}
   - component: {fileID: 1799251633298918339}
   - component: {fileID: 6787758700794470558}
+  - component: {fileID: 6704110854298640391}
+  - component: {fileID: 3880805740180040739}
   m_Layer: 0
   m_Name: Analyzer
-  m_TagString: Untagged
+  m_TagString: AnalyzerStation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.66, y: -2.82, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.276, y: 2.8624434, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -78,7 +80,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: 3536455416749844256, guid: 35f6d38739516704189baff11f77b6a5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -132,8 +134,37 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5501532867648818480}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ffa06dff34c9384cb85f040409f170b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6704110854298640391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5501532867648818480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dfd4031b1cd2c3449b932f1bcdae535, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentSample: {fileID: 0}
+  daysLeft: 0
+  startAnalysisSfx: {fileID: 0}
+  completeSfx: {fileID: 0}
+--- !u!114 &3880805740180040739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5501532867648818480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34a352d9cb295764abc0e69271f5df23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: analyzer1

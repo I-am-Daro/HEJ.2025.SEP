@@ -9,6 +9,81 @@ public class GameData : MonoBehaviour
 {
     public static GameData I { get; private set; }
 
+    // ==== ROCK REGISTRY (mint a plant/building) ====
+    [Header("Rock registry (RockSampleDefinition SO-k)")]
+    public RockSampleDefinition[] rockRegistry;
+    private readonly Dictionary<string, RockSampleDefinition> rockReg = new();
+
+    public RockSampleDefinition ResolveRock(string id)
+        => (!string.IsNullOrEmpty(id) && rockReg.TryGetValue(id, out var d)) ? d : null;
+
+    // ==== ANALYZER SAVE ====
+    [Serializable]
+    public class AnalyzerJobSave
+    {
+        public bool hasJob;
+        public string sampleId;   // RockSampleDefinition.id
+        public int daysLeft;
+    }
+
+
+    public bool TryGetAnalyzerJobRaw(string stationStableId,
+                                 out string sampleId,
+                                 out int daysLeft)
+    {
+        sampleId = null; daysLeft = 0;
+        if (string.IsNullOrEmpty(stationStableId)) return false;
+
+        if (analyzerJobs.TryGetValue(stationStableId, out var s) && s != null && s.hasJob)
+        {
+            sampleId = s.sampleId;     // lehet érvényes, még ha feloldani nem is tudjuk azonnal
+            daysLeft = s.daysLeft;
+            return true;
+        }
+        return false;
+    }
+
+    // station StableId -> job
+    private readonly Dictionary<string, AnalyzerJobSave> analyzerJobs = new();
+
+    public bool TryGetAnalyzerJob(string stationStableId,
+                              out RockSampleDefinition sample,
+                              out int daysLeft)
+    {
+        sample = null; daysLeft = 0;
+        if (string.IsNullOrEmpty(stationStableId)) return false;
+
+        if (analyzerJobs.TryGetValue(stationStableId, out var s) && s != null && s.hasJob)
+        {
+            daysLeft = s.daysLeft;
+            sample = ResolveRock(s.sampleId);   // ha null, attól még van mentés!
+            return true;                        // <-- fontos
+        }
+        return false;
+    }
+
+    public void WriteAnalyzerJob(string stationStableId,
+                                 RockSampleDefinition sample,
+                                 int daysLeft)
+    {
+        if (string.IsNullOrEmpty(stationStableId) || sample == null) return;
+
+        if (!analyzerJobs.TryGetValue(stationStableId, out var s) || s == null)
+        {
+            s = new AnalyzerJobSave();
+            analyzerJobs[stationStableId] = s;
+        }
+        s.hasJob = true;
+        s.sampleId = sample.id;   // fontos: a RockSampleDefinition.id legyen kitöltve!
+        s.daysLeft = daysLeft;
+    }
+
+    public void ClearAnalyzerJob(string stationStableId)
+    {
+        if (string.IsNullOrEmpty(stationStableId)) return;
+        analyzerJobs.Remove(stationStableId);
+    }
+
     // -----------------------------
     // PLANT SAVE STRUCTURE
     // -----------------------------
@@ -123,6 +198,15 @@ public class GameData : MonoBehaviour
         if (I != null && I != this) { Destroy(gameObject); return; }
         I = this;
         DontDestroyOnLoad(gameObject);
+
+        // rock registry feltöltés
+        rockReg.Clear();
+        if (rockRegistry != null)
+        {
+            foreach (var r in rockRegistry)
+                if (r && !string.IsNullOrEmpty(r.id))
+                    rockReg[r.id] = r;
+        }
 
         // növény registry feltöltés
         plantReg.Clear();

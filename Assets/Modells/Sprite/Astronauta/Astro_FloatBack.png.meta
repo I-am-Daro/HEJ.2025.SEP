@@ -131,6 +131,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -138,12 +151,12 @@ TextureImporter:
       name: Astro_FloatBack_0
       rect:
         serializedVersion: 2
-        x: 12
-        y: 2
-        width: 42
-        height: 62
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 13
+        y: 0
+        width: 40
+        height: 64
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -160,12 +173,12 @@ TextureImporter:
       name: Astro_FloatBack_1
       rect:
         serializedVersion: 2
-        x: 76
-        y: 1
-        width: 42
-        height: 63
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 77
+        y: 0
+        width: 40
+        height: 64
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -182,12 +195,12 @@ TextureImporter:
       name: Astro_FloatBack_2
       rect:
         serializedVersion: 2
-        x: 140
+        x: 141
         y: 0
-        width: 42
-        height: 62
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 40
+        height: 64
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -204,12 +217,12 @@ TextureImporter:
       name: Astro_FloatBack_3
       rect:
         serializedVersion: 2
-        x: 204
+        x: 205
         y: 0
-        width: 42
-        height: 62
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 40
+        height: 64
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -226,7 +239,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: c42f5b3a31ba3c74b90a2780b8b09b3c
     internalID: 0
     vertices: []
     indices: 
@@ -235,7 +248,11 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Astro_FloatBack_0: -459126700252337969
+      Astro_FloatBack_1: -7034838667275847216
+      Astro_FloatBack_2: 1915742490501699879
+      Astro_FloatBack_3: -6503427271047122709
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
