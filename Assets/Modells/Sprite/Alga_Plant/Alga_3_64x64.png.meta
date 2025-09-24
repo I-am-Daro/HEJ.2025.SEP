@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2c0cf1dc17b79eb4394f522daa9ae5da
+guid: a676ab5a02c954e40a3935bfee9e799d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 293546521489430374
-    second: "R\xC9PA b\xFAra_0"
+      213: 2247175220876393224
+    second: Alga_3_64x64_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "R\xC9PA b\xFAra_0"
+      name: Alga_3_64x64_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 3292
-        height: 1579
+        x: 110
+        y: 30
+        width: 491
+        height: 505
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 667dd6a8103e21400800000000000000
-      internalID: 293546521489430374
+      spriteID: 80bb56415f19f2f10800000000000000
+      internalID: 2247175220876393224
       vertices: []
       indices: 
       edges: []
@@ -160,8 +160,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      "R\xC9PA b\xFAra_0": 293546521489430374
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
