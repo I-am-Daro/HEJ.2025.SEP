@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Audio;          // <<< ÚJ
 using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
 
@@ -43,6 +44,10 @@ public class TopDownMover : MonoBehaviour
     [SerializeField] float minVelocityForZeroGSound = 0.15f;
     [SerializeField, Range(0f, 1f)] float zeroGSfxVolume = 0.7f;
 
+    [Header("Audio Routing")]
+    [Tooltip("Kösd ide a Mixer SFX csoportját, hogy az Options SFX csúszka szabályozza ezeket a hangokat.")]
+    [SerializeField] AudioMixerGroup sfxBus;   // <<< ÚJ
+
     [Header("Top-Down directional (Animator)")]
     [SerializeField] bool enableDirectionalTopDown = true;
     [SerializeField] bool directionalAlsoInZeroG = true;
@@ -73,6 +78,7 @@ public class TopDownMover : MonoBehaviour
         if (!spriteRenderer) spriteRenderer = GetComponentInChildren<SpriteRenderer>(true);
         if (!animator) animator = GetComponentInChildren<Animator>(true);
 
+        // Ground footsteps forrás
         if (!footstepSource)
         {
             footstepSource = gameObject.AddComponent<AudioSource>();
@@ -81,6 +87,7 @@ public class TopDownMover : MonoBehaviour
         }
         footstepSource.volume = groundSfxVolume;
 
+        // ZeroG whoosh forrás
         if (!zeroGSource)
         {
             zeroGSource = gameObject.AddComponent<AudioSource>();
@@ -88,6 +95,24 @@ public class TopDownMover : MonoBehaviour
             zeroGSource.spatialBlend = 0f;
         }
         zeroGSource.volume = zeroGSfxVolume;
+
+        // <<< ÚJ: mindkét forrás rá a Mixer SFX csoportra >>>
+        ApplyMixerGroup();
+    }
+
+    void ApplyMixerGroup()
+    {
+        if (sfxBus)
+        {
+            if (footstepSource) footstepSource.outputAudioMixerGroup = sfxBus;
+            if (zeroGSource) zeroGSource.outputAudioMixerGroup = sfxBus;
+        }
+    }
+
+    void OnValidate()
+    {
+        // Ha inspectorban később húzod be a sfxBus-t, érvényesítsük
+        ApplyMixerGroup();
     }
 
     void OnDisable()
@@ -122,9 +147,18 @@ public class TopDownMover : MonoBehaviour
         UpdateAnimation(speed);
         HandleMovementAudio(speed, zeroG);
 
-        // runtime volume tweak
+        // runtime volume finomhang
         if (footstepSource) footstepSource.volume = groundSfxVolume;
         if (zeroGSource) zeroGSource.volume = zeroGSfxVolume;
+
+        // ha futás közben állítod be a bus-t, frissítsük
+        if (sfxBus)
+        {
+            if (footstepSource && footstepSource.outputAudioMixerGroup != sfxBus)
+                footstepSource.outputAudioMixerGroup = sfxBus;
+            if (zeroGSource && zeroGSource.outputAudioMixerGroup != sfxBus)
+                zeroGSource.outputAudioMixerGroup = sfxBus;
+        }
     }
 
     bool IsZeroG() => (stats != null && stats.isZeroG);
@@ -133,7 +167,6 @@ public class TopDownMover : MonoBehaviour
     {
         bool zeroG = IsZeroG();
 
-        // IsMoving: ZeroG-ben input alapján, egyébként sebesség alapján
         bool movingZeroG = moveInput.sqrMagnitude >= (zgInputDeadzone * zgInputDeadzone);
         bool movingGround = currentSpeed >= 0.01f;
         bool moving = zeroG ? movingZeroG : movingGround;
@@ -190,9 +223,8 @@ public class TopDownMover : MonoBehaviour
             animator.SetInteger(dirParam, moveDir);
         }
 
-        // --- FLIP: mindig frissítsük, ha van vízszintes szándék (input/velocity) ---
+        // FlipX: horizontális szándék alapján (input előnyben)
         float horizSource;
-
         bool haveInputX = Mathf.Abs(moveInput.x) >= flipDeadzone;
         if (preferInputOverVelocityTD && haveInputX)
         {
@@ -262,7 +294,6 @@ public class TopDownMover : MonoBehaviour
         if (zeroGClips == null || zeroGClips.Length == 0 || zeroGSource == null)
             return;
 
-        // ZeroG-ben most input-alapú a hang
         bool moving = moveInput.sqrMagnitude >= (zgInputDeadzone * zgInputDeadzone);
 
         if (!moving)

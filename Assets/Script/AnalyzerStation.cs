@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Security.AccessControl;
 using UnityEngine;
+using UnityEngine.Audio; // <<< ÚJ
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Collider2D))]
@@ -11,9 +12,17 @@ public class AnalyzerStation : MonoBehaviour, IInteractable
     [SerializeField] private RockSampleDefinition currentSample;
     [SerializeField] private int daysLeft;
 
-    [Header("Optional SFX")]
+    [Header("Optional SFX (clips)")]
     public AudioClip startAnalysisSfx;
     public AudioClip completeSfx;
+
+    [Header("Audio Routing")]
+    [Tooltip("Irányítsd erre a mixer ágra (SFX), hogy az Options/Audio csúszkák hassanak rá.")]
+    public AudioMixerGroup sfxBus;               // <<< ÚJ: ide kösd a Mixer SFX Groupot
+    [Range(0f, 1f)] public float sfxVolume = 1f; // opcionális helyi szorzó (Mixer mellett)
+
+    // Belső egyshot forrás – hogy a mixer csoporton menjen át
+    AudioSource oneShotSource;                   // <<< ÚJ
 
     // ==== ESEMÉNYEK UI/Observereknek ====
     public event Action<RockSampleDefinition, int> OnJobStarted;
@@ -31,23 +40,17 @@ public class AnalyzerStation : MonoBehaviour, IInteractable
     public class AnalysisResults
     {
         [Serializable]
-        public struct ResourceGrant
-        {
-            public ResourceType type;
-            public int amount;
-        }
+        public struct ResourceGrant { public ResourceType type; public int amount; }
 
         public RockSampleDefinition source;
         public List<ResourceGrant> resources = new List<ResourceGrant>();
-
-        // PlantDefinition (nálad így van bekötve az inventory AddSeed-hez)
         public PlantDefinition seedDef;
         public int seedAmount;
     }
 
     AnalysisResults pendingResults;
-    public bool HasPendingResults => pendingResults != null;       // <<< UI-nak kényelmes
-    public AnalysisResults PeekPendingResults() => pendingResults; // <<< UI lekérdezés
+    public bool HasPendingResults => pendingResults != null;
+    public AnalysisResults PeekPendingResults() => pendingResults;
 
     string stableId;
 
@@ -57,6 +60,14 @@ public class AnalyzerStation : MonoBehaviour, IInteractable
         if (!sid) sid = StableId.AddTo(gameObject);
         if (string.IsNullOrEmpty(sid.Id)) sid.AssignNewRuntimeId();
         stableId = sid.Id;
+
+        // --- Belső SFX forrás setup (Mixer SFX csoporthoz kötve) ---
+        oneShotSource = gameObject.AddComponent<AudioSource>();
+        oneShotSource.playOnAwake = false;
+        oneShotSource.loop = false;
+        oneShotSource.spatialBlend = 0f; // 2D
+        if (sfxBus) oneShotSource.outputAudioMixerGroup = sfxBus;
+        oneShotSource.volume = sfxVolume; // helyi szorzó (Mixer mellett)
     }
 
     void Reset()
@@ -73,7 +84,6 @@ public class AnalyzerStation : MonoBehaviour, IInteractable
         // Betöltés mentésből (ha volt futó job)
         if (!HasActiveJob && GameData.I != null && !string.IsNullOrEmpty(stableId))
         {
-            // Nálad TryGetAnalyzerJobRaw van – ha átneveznéd TryGetAnalyzerJob-ra, ezt a blokkot igazítsd hozzá
             if (GameData.I.TryGetAnalyzerJobRaw(stableId, out var savedId, out var savedDays))
             {
                 var def = GameData.I.ResolveRock(savedId);
@@ -96,9 +106,14 @@ public class AnalyzerStation : MonoBehaviour, IInteractable
         if (DayNightSystem.Instance != null)
             DayNightSystem.Instance.OnDayAdvanced -= OnDayAdvanced;
 
-        // Kimenetkor is írunk, ha fut a job
         if (HasActiveJob && GameData.I != null)
             GameData.I.WriteAnalyzerJob(stableId, currentSample, daysLeft);
+    }
+
+    void Update()
+    {
+        // Ha futás közben állítod inspectorban a sfxVolume-ot, érvényesüljön:
+        if (oneShotSource) oneShotSource.volume = sfxVolume;
     }
 
     public string GetPrompt()
@@ -123,7 +138,9 @@ public class AnalyzerStation : MonoBehaviour, IInteractable
 
         StartAnalysis(def);
 
-        if (startAnalysisSfx) AudioSource.PlayClipAtPoint(startAnalysisSfx, transform.position);
+        // --- SFX: START (Mixer SFX ágon) ---
+        PlaySfx(startAnalysisSfx);
+
         OnJobStarted?.Invoke(currentSample, daysLeft);
 
         if (GameData.I != null) GameData.I.WriteAnalyzerJob(stableId, currentSample, daysLeft);
@@ -160,22 +177,16 @@ public class AnalyzerStation : MonoBehaviour, IInteractable
 
         var results = new AnalysisResults { source = currentSample };
 
-        // Resource hozamok – csak gyűjtjük (még nem írjuk jóvá)
         if (currentSample.yields != null)
         {
             foreach (var y in currentSample.yields)
             {
                 int amt = Random.Range(y.min, y.max + 1);
                 if (amt > 0)
-                    results.resources.Add(new AnalysisResults.ResourceGrant
-                    {
-                        type = y.type,
-                        amount = amt
-                    });
+                    results.resources.Add(new AnalysisResults.ResourceGrant { type = y.type, amount = amt });
             }
         }
 
-        // Seed esély – PlantDefinition-t használunk
         if (currentSample.seedDef && currentSample.seedChancePercent > 0)
         {
             if (Random.Range(0, 100) < currentSample.seedChancePercent)
@@ -186,40 +197,49 @@ public class AnalyzerStation : MonoBehaviour, IInteractable
             }
         }
 
-        if (completeSfx) AudioSource.PlayClipAtPoint(completeSfx, transform.position);
+        // --- SFX: COMPLETE (Mixer SFX ágon) ---
+        PlaySfx(completeSfx);
 
         var finished = currentSample;
 
-        // aktív job törlése a mentésből
         if (GameData.I != null) GameData.I.ClearAnalyzerJob(stableId);
 
-        // job állapot kiürítése
         currentSample = null;
         daysLeft = 0;
 
-        // eredmény “parkoltatása”
         pendingResults = results;
 
         OnJobCompleted?.Invoke(finished);
         OnResultsReady?.Invoke(pendingResults);
     }
 
-    // <<< alias a results panelhez >>>
+    // alias a results panelhez
     public void AcceptPendingResults(PlayerInventory inv) => AcceptResults(inv);
 
     public void AcceptResults(PlayerInventory inv)
     {
         if (pendingResults == null || inv == null) return;
 
-        // 1) Resources jóváírás
         foreach (var g in pendingResults.resources)
             if (g.amount > 0) inv.AddResource(g.type, g.amount);
 
-        // 2) Seed jóváírás (PlantDefinition)
         if (pendingResults.seedDef && pendingResults.seedAmount > 0)
             inv.AddSeed(pendingResults.seedDef, pendingResults.seedAmount);
 
         pendingResults = null;
         OnResultsAccepted?.Invoke();
+    }
+
+    // ---------- Audio helper ----------
+    void PlaySfx(AudioClip clip)
+    {
+        if (!clip || !oneShotSource) return;
+
+        // biztosítsuk, hogy a mixer group mindig jó legyen (ha futás közben állítod be)
+        if (sfxBus && oneShotSource.outputAudioMixerGroup != sfxBus)
+            oneShotSource.outputAudioMixerGroup = sfxBus;
+
+        oneShotSource.pitch = 1f;
+        oneShotSource.PlayOneShot(clip, sfxVolume); // végső szorzó – a fő hangerőt a Mixer adja
     }
 }

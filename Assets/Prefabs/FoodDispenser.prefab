@@ -153,13 +153,15 @@ MonoBehaviour:
   animator: {fileID: 4301315937994198119}
   doorBoolParam: IsOpen
   openDuration: 0.8
-  eatDuration: 1
+  eatDuration: 0.8
   closeDuration: 0.8
   sfxSource: {fileID: 0}
   openSfx: {fileID: 8300000, guid: 15014bd1422eb514fbf6edd223315527, type: 3}
   eatSfx: {fileID: 8300000, guid: 7792da290c90b5a4e90e57dbc6dd0024, type: 3}
   closeSfx: {fileID: 8300000, guid: 15014bd1422eb514fbf6edd223315527, type: 3}
+  sfxBus: {fileID: -1108226630674522744, guid: 5bfc0b78e1dada649bd47e0ba9b8cc27, type: 2}
   lockMovementDuringUse: 1
+  restoreOnlyPlatformer: 1
 --- !u!95 &4301315937994198119
 Animator:
   serializedVersion: 7

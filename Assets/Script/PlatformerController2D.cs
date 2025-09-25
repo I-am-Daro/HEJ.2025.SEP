@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Audio;            // <<< ÚJ
 using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
 
@@ -19,9 +20,9 @@ public class PlatformerController2D : MonoBehaviour
     [Header("Zero-G Animator Reset (when interior)")]
     [Tooltip("Ha igaz: amikor ez a controller aktív, minden frame-ben reseteljük a Zero-G paramokat.")]
     [SerializeField] bool resetZeroGAnimator = true;
-    [SerializeField] string isZeroGParam = "IsZeroG";      // bool
-    [SerializeField] string zgIsMovingParam = "ZG_IsMoving"; // bool
-    [SerializeField] string zgSpeedParam = "ZG_Speed";       // float
+    [SerializeField] string isZeroGParam = "IsZeroG";        // bool
+    [SerializeField] string zgIsMovingParam = "ZG_IsMoving";  // bool
+    [SerializeField] string zgSpeedParam = "ZG_Speed";        // float
 
     [Header("Ground check (optional)")]
     [SerializeField] Transform groundCheck;
@@ -36,6 +37,10 @@ public class PlatformerController2D : MonoBehaviour
     [SerializeField] float stepPitchMax = 1.08f;
     [SerializeField] bool randomizeStartTime = true;
     [SerializeField] float minHorizontalSpeedForStep = 0.15f;
+
+    [Header("Audio Routing")]
+    [Tooltip("Kösd ide a Mixer SFX csoportját, hogy az Options SFX csúszka szabályozza a lépéshangot.")]
+    [SerializeField] AudioMixerGroup sfxBus;   // <<< ÚJ
 
     Rigidbody2D rb;
     float moveX;
@@ -67,13 +72,12 @@ public class PlatformerController2D : MonoBehaviour
             hasSpeedParam = !string.IsNullOrEmpty(speedParam) &&
                             AnimatorHasParam(animator, speedParam, AnimatorControllerParameterType.Float);
 
-            // Zero-G paramokat is feljegyezzük, hogy csak akkor állítsuk, ha tényleg léteznek
             hasIsZeroGParam = !string.IsNullOrEmpty(isZeroGParam) &&
-                              AnimatorHasParam(animator, isZeroGParam, AnimatorControllerParameterType.Bool);
+                                AnimatorHasParam(animator, isZeroGParam, AnimatorControllerParameterType.Bool);
             hasZgIsMovingParam = !string.IsNullOrEmpty(zgIsMovingParam) &&
                                  AnimatorHasParam(animator, zgIsMovingParam, AnimatorControllerParameterType.Bool);
             hasZgSpeedParam = !string.IsNullOrEmpty(zgSpeedParam) &&
-                              AnimatorHasParam(animator, zgSpeedParam, AnimatorControllerParameterType.Float);
+                                 AnimatorHasParam(animator, zgSpeedParam, AnimatorControllerParameterType.Float);
         }
 
         if (!footstepSource)
@@ -84,9 +88,24 @@ public class PlatformerController2D : MonoBehaviour
             footstepSource.spatialBlend = 0f;
             footstepSource.volume = 1f;
         }
+
+        // <<< ÚJ: forrás bekötése a Mixer SFX csoportba >>>
+        ApplyMixerGroup();
     }
 
-    // <<< FONTOS: amikor a belsõ (platformer) controller ÉLES, kilépünk Zero-G-bõl és kinullázzuk a Zero-G anim paramokat >>>
+    void ApplyMixerGroup()
+    {
+        if (sfxBus && footstepSource)
+            footstepSource.outputAudioMixerGroup = sfxBus;
+    }
+
+    void OnValidate()
+    {
+        // Inspectorban késõbb beállított sfxBus azonnal érvényesüljön
+        ApplyMixerGroup();
+    }
+
+    // amikor a belsõ (platformer) controller éles, lépjünk ki Zero-G-bõl és nullázzuk a ZG anim paramokat
     void OnEnable()
     {
         if (stats) stats.isZeroG = false;
@@ -138,6 +157,9 @@ public class PlatformerController2D : MonoBehaviour
 
         UpdateAnimation(absVX, vx);
         HandleFootsteps(absVX, grounded);
+
+        // ha futás közben húztad rá a bus-t, itt is biztosítsuk
+        ApplyMixerGroup();
     }
 
     void ClearZeroGAnimatorState()

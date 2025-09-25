@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 412823791753483068}
   - component: {fileID: 2333946138936901396}
   - component: {fileID: 1799251633298918339}
-  - component: {fileID: 6787758700794470558}
   - component: {fileID: 6704110854298640391}
   - component: {fileID: 3880805740180040739}
+  - component: {fileID: 4632456271409834049}
   m_Layer: 0
   m_Name: Analyzer
   m_TagString: AnalyzerStation
@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.66, y: -2.82, z: 0}
-  m_LocalScale: {x: 2.276, y: 2.8624434, z: 1}
+  m_LocalScale: {x: 1.4713202, y: 1.8504266, z: 0.64645}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -79,8 +79,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 3536455416749844256, guid: 35f6d38739516704189baff11f77b6a5, type: 3}
+  m_SortingOrder: -1
+  m_Sprite: {fileID: 5341762563847396230, guid: 4e00302445e918c41874139ab1d8abfb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -125,20 +125,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Radius: 0.5
---- !u!114 &6787758700794470558
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5501532867648818480}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ffa06dff34c9384cb85f040409f170b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Offset: {x: -0.047727544, y: 0}
+  m_Radius: 0.6338218
 --- !u!114 &6704110854298640391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,8 +141,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentSample: {fileID: 0}
   daysLeft: 0
-  startAnalysisSfx: {fileID: 0}
-  completeSfx: {fileID: 0}
+  startAnalysisSfx: {fileID: 8300000, guid: a1a3f5d3f2776de4f988eea1d90f2ddf, type: 3}
+  completeSfx: {fileID: 8300000, guid: 9da0ee4a629085c41bf30610a86db80d, type: 3}
+  sfxBus: {fileID: -1108226630674522744, guid: 5bfc0b78e1dada649bd47e0ba9b8cc27, type: 2}
+  sfxVolume: 1
 --- !u!114 &3880805740180040739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,3 +158,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: analyzer1
+--- !u!95 &4632456271409834049
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5501532867648818480}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 3e1204084f2e6e147b79f0408d09635b, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
