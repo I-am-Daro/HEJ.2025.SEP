@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      "UI_energia_cs\xEDk_0": 8126139725841493286
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

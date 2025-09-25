@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      "UI_r\xE9pa_feh\xE9r kocka_0": 101181803013605138
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

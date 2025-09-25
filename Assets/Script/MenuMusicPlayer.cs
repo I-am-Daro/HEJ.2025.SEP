@@ -1,33 +1,75 @@
+ï»¿using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(AudioSource))]
 public class MenuMusicPlayer : MonoBehaviour
 {
+    [SerializeField] AudioMixer mixer;                  // ugyanaz az asset, mint a VolumeManager hasznÃ¡l
+    [SerializeField] string musicGroupName = "Music";   // a Music csoport neve a Mixerben
+    [SerializeField] string[] allowedScenes = { "MainMenu", "PauseMenu" };
+
     AudioSource src;
 
     void Awake()
     {
         src = GetComponent<AudioSource>();
-        src.playOnAwake = false; // csak mi indítsuk
+
+        if (src.outputAudioMixerGroup == null && mixer != null)
+        {
+            var groups = mixer.FindMatchingGroups(musicGroupName);
+            if (groups != null && groups.Length > 0)
+                src.outputAudioMixerGroup = groups[0];
+        }
+
+        src.playOnAwake = false;
+        DontDestroyOnLoad(gameObject);
     }
 
     void OnEnable()
     {
-        StartCoroutine(PlayWhenBootReady());
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        StartCoroutine(PlayNextFrame());
     }
 
-    System.Collections.IEnumerator PlayWhenBootReady()
+    void OnDisable()
     {
-        // várjuk meg, hogy AudioVolumeBoot biztosan beállítson
-        AudioVolumeBoot boot = null;
-        while (boot == null)
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        HandleScene(scene.name);
+    }
+
+    IEnumerator PlayNextFrame()
+    {
+        yield return null;
+        HandleScene(SceneManager.GetActiveScene().name);
+    }
+
+    void HandleScene(string sceneName)
+    {
+        bool shouldPlay = false;
+        foreach (var s in allowedScenes)
         {
-            boot = FindFirstObjectByType<AudioVolumeBoot>(FindObjectsInactive.Include);
-            yield return null;
+            if (sceneName == s) { shouldPlay = true; break; }
         }
 
-        // amikor kész, indítsuk a zenét
-        if (src && !src.isPlaying)
-            src.Play();
+        if (shouldPlay)
+        {
+            if (!src.isPlaying)
+            {
+                src.Play();
+            }
+        }
+        else
+        {
+            if (src.isPlaying)
+            {
+                src.Stop();
+            }
+        }
     }
 }

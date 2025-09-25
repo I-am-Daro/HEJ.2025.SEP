@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: Aerolgae_Plant
   displayName: Aerolgae
-  seedSprite: {fileID: 7482667652216324306, guid: fe69c23e8bbdf7a44a25c33265ff49bf, type: 3}
-  saplingSprite: {fileID: 7482667652216324306, guid: fe69c23e8bbdf7a44a25c33265ff49bf, type: 3}
-  matureSprite: {fileID: 7482667652216324306, guid: fe69c23e8bbdf7a44a25c33265ff49bf, type: 3}
-  fruitingSprite: {fileID: 7482667652216324306, guid: fe69c23e8bbdf7a44a25c33265ff49bf, type: 3}
-  witheredSprite: {fileID: 7482667652216324306, guid: fe69c23e8bbdf7a44a25c33265ff49bf, type: 3}
   daysSeedToSapling: 1
   daysSaplingToMature: 1
   daysMatureToFruiting: 1
   regrowDaysAfterHarvest: 3
+  seedSprite: {fileID: -6898613554992102058, guid: a0165c7f35c5ea5448e4ae730c93e1e9, type: 3}
+  saplingSprite: {fileID: -303340594069450013, guid: 840ecb8db9773524f94f896cb87233cf, type: 3}
+  matureSprite: {fileID: -2007605316032469443, guid: 71e0566b442b6e348b28f452d5e155eb, type: 3}
+  fruitingSprite: {fileID: 5448717457188727361, guid: e382215c7a766f642a69538e71146689, type: 3}
+  witheredSprite: {fileID: 3283973190957757411, guid: 96c77f8259f74cf45a507c7670671066, type: 3}
   produceType: 0
   produceAmount: 200

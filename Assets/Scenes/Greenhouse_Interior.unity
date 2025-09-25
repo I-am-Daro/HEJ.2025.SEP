@@ -1308,63 +1308,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   exteriorSceneName: Planet_Exterior
   fallbackSpawnId: FromGreenhouse_GH
---- !u!1001 &1861796224
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2607276180003543096, guid: bb6f68626d89a414e9a9205696f75431, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.5456885
-      objectReference: {fileID: 0}
-    - target: {fileID: 2607276180003543096, guid: bb6f68626d89a414e9a9205696f75431, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -5.2914095
-      objectReference: {fileID: 0}
-    - target: {fileID: 2607276180003543096, guid: bb6f68626d89a414e9a9205696f75431, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.2524795
-      objectReference: {fileID: 0}
-    - target: {fileID: 2607276180003543096, guid: bb6f68626d89a414e9a9205696f75431, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2607276180003543096, guid: bb6f68626d89a414e9a9205696f75431, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2607276180003543096, guid: bb6f68626d89a414e9a9205696f75431, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2607276180003543096, guid: bb6f68626d89a414e9a9205696f75431, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2607276180003543096, guid: bb6f68626d89a414e9a9205696f75431, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2607276180003543096, guid: bb6f68626d89a414e9a9205696f75431, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2607276180003543096, guid: bb6f68626d89a414e9a9205696f75431, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6630945197832186949, guid: bb6f68626d89a414e9a9205696f75431, type: 3}
-      propertyPath: m_Name
-      value: VolumeState
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: bb6f68626d89a414e9a9205696f75431, type: 3}
 --- !u!1001 &1946404478
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1767,4 +1710,3 @@ SceneRoots:
   - {fileID: 2106240609}
   - {fileID: 1960829358}
   - {fileID: 1946404478}
-  - {fileID: 1861796224}
