@@ -185,6 +185,32 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -685,7 +711,29 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      "UI_energia_cs\xEDk_2_0": 8580970720170066959
+      "UI_energia_cs\xEDk_2_1": 3560857154670954830
+      "UI_energia_cs\xEDk_2_10": 6483416773626272584
+      "UI_energia_cs\xEDk_2_11": -5490461430014894631
+      "UI_energia_cs\xEDk_2_12": 1948033855029426370
+      "UI_energia_cs\xEDk_2_13": 5731263035908442653
+      "UI_energia_cs\xEDk_2_14": -9031747121833346240
+      "UI_energia_cs\xEDk_2_15": -3403847800861530636
+      "UI_energia_cs\xEDk_2_16": 2790604478425702722
+      "UI_energia_cs\xEDk_2_17": -4660490404059955037
+      "UI_energia_cs\xEDk_2_18": -820164614573292796
+      "UI_energia_cs\xEDk_2_19": -6292686727250169539
+      "UI_energia_cs\xEDk_2_2": -4058705524315723549
+      "UI_energia_cs\xEDk_2_20": 3288974826633597696
+      "UI_energia_cs\xEDk_2_21": -1535973414903534674
+      "UI_energia_cs\xEDk_2_3": 7420739149198654467
+      "UI_energia_cs\xEDk_2_4": 6271328869152055809
+      "UI_energia_cs\xEDk_2_5": -2990486009799192728
+      "UI_energia_cs\xEDk_2_6": 8073278807677989214
+      "UI_energia_cs\xEDk_2_7": -6268248240906406657
+      "UI_energia_cs\xEDk_2_8": 2627367425979713014
+      "UI_energia_cs\xEDk_2_9": -8873969735041615589
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
