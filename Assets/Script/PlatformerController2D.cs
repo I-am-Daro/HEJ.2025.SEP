@@ -16,6 +16,13 @@ public class PlatformerController2D : MonoBehaviour
     [SerializeField] string isMovingParam = "IsMoving"; // bool
     [SerializeField] string speedParam = "Speed";       // float (opcionális)
 
+    [Header("Zero-G Animator Reset (when interior)")]
+    [Tooltip("Ha igaz: amikor ez a controller aktív, minden frame-ben reseteljük a Zero-G paramokat.")]
+    [SerializeField] bool resetZeroGAnimator = true;
+    [SerializeField] string isZeroGParam = "IsZeroG";      // bool
+    [SerializeField] string zgIsMovingParam = "ZG_IsMoving"; // bool
+    [SerializeField] string zgSpeedParam = "ZG_Speed";       // float
+
     [Header("Ground check (optional)")]
     [SerializeField] Transform groundCheck;
     [SerializeField] float groundCheckRadius = 0.08f;
@@ -40,6 +47,9 @@ public class PlatformerController2D : MonoBehaviour
     // animator param cache
     bool hasIsMovingParam;
     bool hasSpeedParam;
+    bool hasIsZeroGParam;
+    bool hasZgIsMovingParam;
+    bool hasZgSpeedParam;
 
     void Awake()
     {
@@ -50,22 +60,20 @@ public class PlatformerController2D : MonoBehaviour
         if (!spriteRenderer) spriteRenderer = GetComponentInChildren<SpriteRenderer>(true);
         if (!animator) animator = GetComponentInChildren<Animator>(true);
 
-        // Egyszeri ellenõrzés: léteznek-e a megadott paraméterek?
         if (animator)
         {
             hasIsMovingParam = !string.IsNullOrEmpty(isMovingParam) &&
                                AnimatorHasParam(animator, isMovingParam, AnimatorControllerParameterType.Bool);
-
             hasSpeedParam = !string.IsNullOrEmpty(speedParam) &&
                             AnimatorHasParam(animator, speedParam, AnimatorControllerParameterType.Float);
 
-            if (!hasIsMovingParam && !string.IsNullOrEmpty(isMovingParam))
-                Debug.LogWarning($"[PlatformerController2D] Animator param '{isMovingParam}' (Bool) nem található. " +
-                                 $"Állítsd be az Animatorban vagy hagyd üresen az inspectorban.");
-
-            if (!hasSpeedParam && !string.IsNullOrEmpty(speedParam))
-                Debug.LogWarning($"[PlatformerController2D] Animator param '{speedParam}' (Float) nem található. " +
-                                 $"Állítsd be az Animatorban vagy hagyd üresen az inspectorban.");
+            // Zero-G paramokat is feljegyezzük, hogy csak akkor állítsuk, ha tényleg léteznek
+            hasIsZeroGParam = !string.IsNullOrEmpty(isZeroGParam) &&
+                              AnimatorHasParam(animator, isZeroGParam, AnimatorControllerParameterType.Bool);
+            hasZgIsMovingParam = !string.IsNullOrEmpty(zgIsMovingParam) &&
+                                 AnimatorHasParam(animator, zgIsMovingParam, AnimatorControllerParameterType.Bool);
+            hasZgSpeedParam = !string.IsNullOrEmpty(zgSpeedParam) &&
+                              AnimatorHasParam(animator, zgSpeedParam, AnimatorControllerParameterType.Float);
         }
 
         if (!footstepSource)
@@ -76,6 +84,13 @@ public class PlatformerController2D : MonoBehaviour
             footstepSource.spatialBlend = 0f;
             footstepSource.volume = 1f;
         }
+    }
+
+    // <<< FONTOS: amikor a belsõ (platformer) controller ÉLES, kilépünk Zero-G-bõl és kinullázzuk a Zero-G anim paramokat >>>
+    void OnEnable()
+    {
+        if (stats) stats.isZeroG = false;
+        if (resetZeroGAnimator) ClearZeroGAnimatorState();
     }
 
     static bool AnimatorHasParam(Animator anim, string paramName, AnimatorControllerParameterType type)
@@ -100,16 +115,37 @@ public class PlatformerController2D : MonoBehaviour
     void FixedUpdate()
     {
         float mult = (stats != null) ? stats.MoveSpeedMultiplier : 1f;
+#if UNITY_2022_3_OR_NEWER
         rb.linearVelocity = new Vector2(moveX * (MoveSpeed * mult), rb.linearVelocity.y);
+#else
+        rb.velocity = new Vector2(moveX * (MoveSpeed * mult), rb.velocity.y);
+#endif
     }
 
     void Update()
     {
+        // Biztonsági háló: amíg belül vagyunk, a Zero-G paramok minden frame-ben NULLÁZVA maradnak
+        if (resetZeroGAnimator) ClearZeroGAnimatorState();
+
+#if UNITY_2022_3_OR_NEWER
         float absVX = Mathf.Abs(rb.linearVelocity.x);
+        float vx = rb.linearVelocity.x;
+#else
+        float absVX = Mathf.Abs(rb.velocity.x);
+        float vx = rb.velocity.x;
+#endif
         bool grounded = IsGrounded();
 
-        UpdateAnimation(absVX, rb.linearVelocity.x);
+        UpdateAnimation(absVX, vx);
         HandleFootsteps(absVX, grounded);
+    }
+
+    void ClearZeroGAnimatorState()
+    {
+        if (!animator) return;
+        if (hasIsZeroGParam) animator.SetBool(isZeroGParam, false);
+        if (hasZgIsMovingParam) animator.SetBool(zgIsMovingParam, false);
+        if (hasZgSpeedParam) animator.SetFloat(zgSpeedParam, 0f);
     }
 
     bool IsGrounded()
@@ -137,7 +173,6 @@ public class PlatformerController2D : MonoBehaviour
         if (footstepClips == null || footstepClips.Length == 0 || footstepSource == null)
             return;
 
-        // csak WALK anim alatt (ha van ilyen param), különben fallback sebesség/grounded alapján
         bool animSaysMoving = animator && hasIsMovingParam && animator.GetBool(isMovingParam);
         bool movingFallback = (!animator || !hasIsMovingParam) &&
                               grounded && horizontalSpeed >= minHorizontalSpeedForStep;
@@ -164,10 +199,7 @@ public class PlatformerController2D : MonoBehaviour
     {
         int idx;
         if (footstepClips.Length == 1) idx = 0;
-        else
-        {
-            do { idx = Random.Range(0, footstepClips.Length); } while (idx == lastClipIndex);
-        }
+        else { do { idx = Random.Range(0, footstepClips.Length); } while (idx == lastClipIndex); }
         lastClipIndex = idx;
 
         var clip = footstepClips[idx];

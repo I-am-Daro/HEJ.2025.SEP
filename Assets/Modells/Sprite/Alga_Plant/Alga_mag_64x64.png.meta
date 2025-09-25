@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: d32f3de7183abe741b099e5fdbd83d6f
+guid: a0165c7f35c5ea5448e4ae730c93e1e9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8690478550272074833
-    second: Alga_0
+      213: -6898613554992102058
+    second: Alga_mag_64x64_0
+  - first:
+      213: -7869142407620333040
+    second: Alga_mag_64x64_1
+  - first:
+      213: -3849142399218773144
+    second: Alga_mag_64x64_2
+  - first:
+      213: -4716211994218636421
+    second: Alga_mag_64x64_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +135,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Alga_0
+      name: Alga_mag_64x64_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 4798
-        height: 5395
+        x: 219
+        y: 388
+        width: 108
+        height: 93
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +150,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1546e158238ca9870800000000000000
-      internalID: 8690478550272074833
+      spriteID: 655400ca5833340a0800000000000000
+      internalID: -6898613554992102058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Alga_mag_64x64_1
+      rect:
+        serializedVersion: 2
+        x: 386
+        y: 447
+        width: 141
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 012f3da3ca03bc290800000000000000
+      internalID: -7869142407620333040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Alga_mag_64x64_2
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 328
+        width: 88
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8639baca169159ac0800000000000000
+      internalID: -3849142399218773144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Alga_mag_64x64_3
+      rect:
+        serializedVersion: 2
+        x: 309
+        y: 205
+        width: 108
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7b5927cd26ac8eb0800000000000000
+      internalID: -4716211994218636421
       vertices: []
       indices: 
       edges: []
@@ -160,8 +235,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Alga_0: 8690478550272074833
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

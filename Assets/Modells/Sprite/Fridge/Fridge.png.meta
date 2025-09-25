@@ -152,6 +152,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -159,12 +172,12 @@ TextureImporter:
       name: Fridge_0
       rect:
         serializedVersion: 2
-        x: 63
+        x: 9
         y: 0
-        width: 66
-        height: 113
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 119
+        height: 117
+      alignment: 8
+      pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -181,12 +194,12 @@ TextureImporter:
       name: Fridge_1
       rect:
         serializedVersion: 2
-        x: 191
+        x: 137
         y: 0
-        width: 66
-        height: 114
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 119
+        height: 117
+      alignment: 8
+      pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -203,12 +216,12 @@ TextureImporter:
       name: Fridge_2
       rect:
         serializedVersion: 2
-        x: 319
+        x: 265
         y: 0
-        width: 66
-        height: 114
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 119
+        height: 117
+      alignment: 8
+      pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -225,12 +238,12 @@ TextureImporter:
       name: Fridge_3
       rect:
         serializedVersion: 2
-        x: 447
+        x: 393
         y: 0
-        width: 66
-        height: 115
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 119
+        height: 117
+      alignment: 8
+      pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -247,12 +260,12 @@ TextureImporter:
       name: Fridge_4
       rect:
         serializedVersion: 2
-        x: 575
+        x: 521
         y: 0
-        width: 66
-        height: 116
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 119
+        height: 117
+      alignment: 8
+      pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -269,12 +282,12 @@ TextureImporter:
       name: Fridge_5
       rect:
         serializedVersion: 2
-        x: 700
+        x: 649
         y: 0
-        width: 69
-        height: 118
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 119
+        height: 117
+      alignment: 8
+      pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -291,12 +304,12 @@ TextureImporter:
       name: Fridge_6
       rect:
         serializedVersion: 2
-        x: 815
+        x: 777
         y: 0
-        width: 82
-        height: 116
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 119
+        height: 117
+      alignment: 8
+      pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -313,12 +326,12 @@ TextureImporter:
       name: Fridge_7
       rect:
         serializedVersion: 2
-        x: 935
+        x: 905
         y: 0
-        width: 90
-        height: 116
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 119
+        height: 117
+      alignment: 8
+      pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -335,12 +348,12 @@ TextureImporter:
       name: Fridge_8
       rect:
         serializedVersion: 2
-        x: 1054
+        x: 1033
         y: 0
-        width: 99
-        height: 116
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 119
+        height: 117
+      alignment: 8
+      pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -357,12 +370,12 @@ TextureImporter:
       name: Fridge_9
       rect:
         serializedVersion: 2
-        x: 1177
+        x: 1161
         y: 0
-        width: 104
-        height: 115
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 119
+        height: 117
+      alignment: 8
+      pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -379,12 +392,12 @@ TextureImporter:
       name: Fridge_10
       rect:
         serializedVersion: 2
-        x: 1288
+        x: 1289
         y: 0
-        width: 120
-        height: 113
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 119
+        height: 117
+      alignment: 8
+      pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -401,7 +414,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 26d70fc4bc3e8b6498006a7510180fd1
     internalID: 0
     vertices: []
     indices: 
@@ -410,7 +423,18 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Fridge_0: -787681131013791189
+      Fridge_1: -2291462030592400546
+      Fridge_10: -2094730423375977998
+      Fridge_2: 5559852086584831114
+      Fridge_3: -1333099625549280609
+      Fridge_4: -1808066213629802024
+      Fridge_5: 7172786827123042022
+      Fridge_6: 1933103012335277822
+      Fridge_7: 2245910112476933875
+      Fridge_8: -287418356179353779
+      Fridge_9: -3088293644545821397
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
