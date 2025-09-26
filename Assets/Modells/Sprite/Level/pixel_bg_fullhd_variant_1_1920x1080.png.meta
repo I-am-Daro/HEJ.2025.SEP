@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      pixel_bg_fullhd_variant_1_1920x1080_0: -9050349412402169348
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

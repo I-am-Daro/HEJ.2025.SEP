@@ -135,22 +135,6 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-<<<<<<< Updated upstream
-  - serializedVersion: 4
-    buildTarget: WindowsStoreApps
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-=======
->>>>>>> Stashed changes
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -160,18 +144,18 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1854
-        height: 856
+        width: 1853
+        height: 855
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c5f5a374f00f8fee0800000000000000
-      internalID: -1226966950048276644
+      spriteID: 8746b926c62156c4981b50e0636b2e52
+      internalID: 2060880191
       vertices: []
       indices: 
       edges: []
@@ -180,7 +164,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 9320513a3beacaf409b781294fdc2bba
     internalID: 0
     vertices: []
     indices: 
@@ -190,7 +174,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Top_0: -1226966950048276644
+      Top_0: 2060880191
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
