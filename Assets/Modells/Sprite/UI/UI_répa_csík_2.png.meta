@@ -185,6 +185,32 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -685,7 +711,29 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      "UI_r\xE9pa_cs\xEDk_2_0": -8498586088690693205
+      "UI_r\xE9pa_cs\xEDk_2_1": 2024678414172560354
+      "UI_r\xE9pa_cs\xEDk_2_10": 1522859567546876825
+      "UI_r\xE9pa_cs\xEDk_2_11": -2539666922903070562
+      "UI_r\xE9pa_cs\xEDk_2_12": -6108419293513949009
+      "UI_r\xE9pa_cs\xEDk_2_13": -9164548747316229168
+      "UI_r\xE9pa_cs\xEDk_2_14": -109950087107343650
+      "UI_r\xE9pa_cs\xEDk_2_15": -7542029698115248596
+      "UI_r\xE9pa_cs\xEDk_2_16": 525106975977959622
+      "UI_r\xE9pa_cs\xEDk_2_17": -4319749031310210295
+      "UI_r\xE9pa_cs\xEDk_2_18": 5838190092994185699
+      "UI_r\xE9pa_cs\xEDk_2_19": -4147010271992268338
+      "UI_r\xE9pa_cs\xEDk_2_2": -8802399156532869747
+      "UI_r\xE9pa_cs\xEDk_2_20": -9195396568575686943
+      "UI_r\xE9pa_cs\xEDk_2_21": -7371829895646386875
+      "UI_r\xE9pa_cs\xEDk_2_3": 474061137203899810
+      "UI_r\xE9pa_cs\xEDk_2_4": 3617249626121008240
+      "UI_r\xE9pa_cs\xEDk_2_5": -6561906350757353719
+      "UI_r\xE9pa_cs\xEDk_2_6": -3231181429753672501
+      "UI_r\xE9pa_cs\xEDk_2_7": -8141821217904928414
+      "UI_r\xE9pa_cs\xEDk_2_8": 6939798965265164939
+      "UI_r\xE9pa_cs\xEDk_2_9": 6764395774554084004
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

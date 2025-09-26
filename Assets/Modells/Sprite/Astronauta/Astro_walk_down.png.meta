@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: 90b273ad8b4884c46acaeca69e0b47d2
+guid: f9ff4eaea37c4104999ba89a2881b322
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4602086233988556868
-    second: Kutyu ^^_0
+      213: 4118771508195523441
+    second: Astro_walk_down_0
+  - first:
+      213: 4875330534462846999
+    second: Astro_walk_down_1
+  - first:
+      213: -1608093387420262216
+    second: Astro_walk_down_2
+  - first:
+      213: 7596350833780422075
+    second: Astro_walk_down_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +46,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -97,32 +106,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WindowsStoreApps
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
     buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -152,13 +135,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Kutyu ^^_0
+      name: Astro_walk_down_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 704
-        height: 757
+        x: 15
+        y: 2
+        width: 36
+        height: 57
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -167,8 +150,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4486a920c05eddf30800000000000000
-      internalID: 4602086233988556868
+      spriteID: 17b7ef05dd0d82930800000000000000
+      internalID: 4118771508195523441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Astro_walk_down_1
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 7
+        width: 36
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 718f54d5a47a8a340800000000000000
+      internalID: 4875330534462846999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Astro_walk_down_2
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 3
+        width: 36
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b0292d8597eea9e0800000000000000
+      internalID: -1608093387420262216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Astro_walk_down_3
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 7
+        width: 36
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb579bc06d8ab6960800000000000000
+      internalID: 7596350833780422075
       vertices: []
       indices: 
       edges: []
@@ -187,7 +236,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Kutyu ^^_0: 4602086233988556868
+      Astro_walk_down_0: 4118771508195523441
+      Astro_walk_down_1: 4875330534462846999
+      Astro_walk_down_2: -1608093387420262216
+      Astro_walk_down_3: 7596350833780422075
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
