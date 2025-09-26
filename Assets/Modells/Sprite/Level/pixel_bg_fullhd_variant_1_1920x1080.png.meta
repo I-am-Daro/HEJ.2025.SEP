@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9389cd5e6a9975447b7991f3a0b804f9
+guid: ad3bed6a8ca62f34193ff4a1c158819f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3165348872880664062
-    second: "Fogasker\xE9k_2d_0"
+      213: -9050349412402169348
+    second: pixel_bg_fullhd_variant_1_1920x1080_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -109,30 +109,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WindowsStoreApps
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "Fogasker\xE9k_2d_0"
+      name: pixel_bg_fullhd_variant_1_1920x1080_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 776
-        height: 770
+        width: 1920
+        height: 1080
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 202d3c988fb6214d0800000000000000
-      internalID: -3165348872880664062
+      spriteID: cf97a940923b66280800000000000000
+      internalID: -9050349412402169348
       vertices: []
       indices: 
       edges: []
@@ -160,8 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      "Fogasker\xE9k_2d_0": -3165348872880664062
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Csavarkulcs_2d_0: -119049154487428152
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
