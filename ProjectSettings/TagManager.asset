@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Spaceship
   - AnalyzerStation
+  - CameraAnchor
   layers:
   - Default
   - TransparentFX

@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 31f0b2bda5afa4f4e99eff5f6dca90c7, type: 3}
-  m_Name: RockSample_Ice(Aerolgae_chance)
+  m_Name: RockSample_Ice_Carrot_chance
   m_EditorClassIdentifier: 
-  id: RockSample_Ice
-  displayName: Iced Rock Sample
+  id: RockSample_IceCarrot
+  displayName: 'Iced Rock Sample '
   icon: {fileID: 4971048406105715844, guid: b385efe023e6dee4eb448efdae27a949, type: 3}
   analysisDaysMin: 2
   analysisDaysMax: 2
@@ -21,7 +21,7 @@ MonoBehaviour:
   - type: 1
     min: 10
     max: 15
-  seedDef: {fileID: 11400000, guid: 4aa246476acf328409df89e018b0666d, type: 2}
+  seedDef: {fileID: 11400000, guid: 190e73c4934dd9b46951e69ac995807e, type: 2}
   seedChancePercent: 35
   seedMin: 1
   seedMax: 1
