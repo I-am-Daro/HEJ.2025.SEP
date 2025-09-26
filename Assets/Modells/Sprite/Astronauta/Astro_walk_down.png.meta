@@ -46,7 +46,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -235,7 +235,11 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Astro_walk_down_0: 4118771508195523441
+      Astro_walk_down_1: 4875330534462846999
+      Astro_walk_down_2: -1608093387420262216
+      Astro_walk_down_3: 7596350833780422075
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

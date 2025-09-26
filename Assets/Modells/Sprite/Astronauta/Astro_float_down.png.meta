@@ -1,19 +1,22 @@
 fileFormatVersion: 2
-guid: cf536edc591bf4f42a2a58f2a06f49a0
+guid: f49160a85d8d7b94689348e185c572b4
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -459126700252337969
-    second: Astro_FloatBack_0
+      213: 5409387630685212615
+    second: Astro_float_down_0
   - first:
-      213: -7034838667275847216
-    second: Astro_FloatBack_1
+      213: 6721553814568725067
+    second: Astro_float_down_1
   - first:
-      213: 1915742490501699879
-    second: Astro_FloatBack_2
+      213: -8866607234891441982
+    second: Astro_float_down_2
   - first:
-      213: -6503427271047122709
-    second: Astro_FloatBack_3
+      213: 5477869485638627296
+    second: Astro_float_down_3
+  - first:
+      213: 2606063162202079596
+    second: Astro_float_down_4
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +49,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -131,106 +134,115 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Astro_FloatBack_0
+      name: Astro_float_down_0
       rect:
         serializedVersion: 2
-        x: 13
-        y: 0
-        width: 40
-        height: 64
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 15
+        y: 7
+        width: 36
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fc8ef8cd2bad0a9f0800000000000000
-      internalID: -459126700252337969
+      spriteID: 7cf4263d361021b40800000000000000
+      internalID: 5409387630685212615
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Astro_FloatBack_1
+      name: Astro_float_down_1
       rect:
         serializedVersion: 2
-        x: 77
-        y: 0
-        width: 40
-        height: 64
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 79
+        y: 5
+        width: 36
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0d937d8118b3f5e90800000000000000
-      internalID: -7034838667275847216
+      spriteID: b4a6a000591c74d50800000000000000
+      internalID: 6721553814568725067
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Astro_FloatBack_2
+      name: Astro_float_down_2
       rect:
         serializedVersion: 2
-        x: 141
-        y: 0
-        width: 40
-        height: 64
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 143
+        y: 2
+        width: 36
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 729d97325a5169a10800000000000000
-      internalID: 1915742490501699879
+      spriteID: 2c8136972bb73f480800000000000000
+      internalID: -8866607234891441982
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Astro_FloatBack_3
+      name: Astro_float_down_3
       rect:
         serializedVersion: 2
-        x: 205
-        y: 0
-        width: 40
-        height: 64
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 207
+        y: 3
+        width: 36
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: be0f5a68a5f2fb5a0800000000000000
-      internalID: -6503427271047122709
+      spriteID: 0ef2171364d450c40800000000000000
+      internalID: 5477869485638627296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Astro_float_down_4
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 7
+        width: 36
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c61494573a89a2420800000000000000
+      internalID: 2606063162202079596
       vertices: []
       indices: 
       edges: []
@@ -239,7 +251,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: c42f5b3a31ba3c74b90a2780b8b09b3c
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -248,11 +260,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Astro_FloatBack_0: -459126700252337969
-      Astro_FloatBack_1: -7034838667275847216
-      Astro_FloatBack_2: 1915742490501699879
-      Astro_FloatBack_3: -6503427271047122709
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
