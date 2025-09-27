@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Aerolgae Seed
   plant: {fileID: 11400000, guid: 4aa246476acf328409df89e018b0666d, type: 2}
-  icon: {fileID: 7482667652216324306, guid: fe69c23e8bbdf7a44a25c33265ff49bf, type: 3}
+  icon: {fileID: -3849142399218773144, guid: a0165c7f35c5ea5448e4ae730c93e1e9, type: 3}

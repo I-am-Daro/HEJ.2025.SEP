@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: Building_greenhouse
   displayName: Greenhouse
-  icon: {fileID: 9093437667217827740, guid: f68b7b5c481a48642aabd985b1835d7a, type: 3}
+  icon: {fileID: 0}
   prefab: {fileID: 4031609602157367242, guid: ec8444f8a06934d4198f05cab54ef780, type: 3}
   size: {x: 1, y: 1}
   blockMask:
     serializedVersion: 2
-    m_Bits: 128
-  canRotate: 1
+    m_Bits: 640
+  canRotate: 0
   forbidNearTagged: 1
   nearTag: Spaceship
   minDistance: 1

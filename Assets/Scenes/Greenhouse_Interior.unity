@@ -1417,7 +1417,7 @@ MonoBehaviour:
   loopMaxDuration: 0
   oneShotMaxDuration: 0
   syncAudioToAnim: 1
-  wateringAnimClip: {fileID: 0}
+  wateringAnimClip: {fileID: 7400000, guid: c506d46c632177c48963c516e1c1c20b, type: 2}
 --- !u!61 &1670904750
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1876,7 +1876,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2487294706022533920, guid: 4853e69232d66bc4eb3af9941949d3af, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.644
+      value: 3.64
       objectReference: {fileID: 0}
     - target: {fileID: 2487294706022533920, guid: 4853e69232d66bc4eb3af9941949d3af, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1924,7 +1924,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5750548139096092475, guid: 4853e69232d66bc4eb3af9941949d3af, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.46
+      value: 0.57
       objectReference: {fileID: 0}
     - target: {fileID: 6032892388202712998, guid: 4853e69232d66bc4eb3af9941949d3af, type: 3}
       propertyPath: m_Size.x
@@ -2136,7 +2136,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5750548139096092475, guid: 4853e69232d66bc4eb3af9941949d3af, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.44
+      value: 0.55
       objectReference: {fileID: 0}
     - target: {fileID: 6032892388202712998, guid: 4853e69232d66bc4eb3af9941949d3af, type: 3}
       propertyPath: m_Size.x

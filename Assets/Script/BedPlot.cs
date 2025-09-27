@@ -109,6 +109,114 @@ public class BedPlot : MonoBehaviour, IInteractable
 
     void OnNewDay(int day) => RestoreFromSave();
 
+
+    void ProgressOneDay(int newDay)
+    {
+        // ha valamiért nincs betöltve a currentPlant, próbáld helyreállítani
+        if (currentPlant == null)
+        {
+            RestoreFromSave();
+            if (currentPlant == null) return;
+        }
+
+        // Fruiting/Withered nem nő tovább (Withered-et külön rendszer hozhatja vissza)
+        if (currentPlant.stage == PlantStage.Fruiting || currentPlant.stage == PlantStage.Withered)
+        {
+            // csak a vizuál/mentés szinkron kedvéért
+            WriteSave();
+            return;
+        }
+
+        // tegnapi locsolás számít a ma reggeli növekedéshez
+        int prevDay = newDay - 1;
+        bool wasWateredYesterday =
+            GameData.I != null && KeysValid() &&
+            GameData.I.IsWatered(greenhouseIdCached, bedKeyCached, prevDay);
+
+        if (!wasWateredYesterday)
+        {
+            // nem volt locsolva → nincs előrelépés (ide teheted később a száradás/withering logikát)
+            WriteSave();
+            return;
+        }
+
+        int daysLeft = currentPlant.GetDaysLeftExternal() - 1;
+        var stage = currentPlant.stage;
+
+        if (daysLeft <= 0)
+        {
+            var def = currentPlant.def;
+            switch (stage)
+            {
+                case PlantStage.Seed:
+                    stage = PlantStage.Sapling;
+                    daysLeft = Mathf.Max(0, def ? def.daysSaplingToMature : 0);
+                    break;
+                case PlantStage.Sapling:
+                    stage = PlantStage.Mature;
+                    daysLeft = Mathf.Max(0, def ? def.daysMatureToFruiting : 0);
+                    break;
+                case PlantStage.Mature:
+                    stage = PlantStage.Fruiting;
+                    daysLeft = 0;
+                    break;
+            }
+        }
+
+        // állapot + vizuál frissítés + mentés
+        ForcePlantState(currentPlant, stage, daysLeft);
+        MirrorFromCurrent();
+        WriteSave();
+    }
+
+    void AdvanceGrowthInSave(int newDay)
+    {
+        var s = GameData.I.GetOrCreateBed(greenhouseIdCached, bedKeyCached);
+        if (s == null || !s.hasPlant || string.IsNullOrEmpty(s.plantDefId)) return;
+
+        // Fruiting/Withered: itt már nincs növekedés (witheringet később lehet ide tenni)
+        if (s.stage == PlantStage.Fruiting || s.stage == PlantStage.Withered) return;
+
+        // tegnapi locsolás számít a ma reggeli növekedéshez
+        int prevDay = newDay - 1;
+        bool wateredYesterday = GameData.I.IsWatered(greenhouseIdCached, bedKeyCached, prevDay);
+        if (!wateredYesterday)
+        {
+            // nem locsoltad → most nem lépünk (ide tehetsz később "száradás" logikát)
+            return;
+        }
+
+        // csökkentjük a hátralévő napokat és szükség esetén stádiumot váltunk
+        int daysLeft = Mathf.Max(0, s.daysLeftInStage - 1);
+        var stage = s.stage;
+
+        var def = GameData.I.ResolveDef(s.plantDefId);
+        if (!def) return;
+
+        if (daysLeft <= 0)
+        {
+            switch (stage)
+            {
+                case PlantStage.Seed:
+                    stage = PlantStage.Sapling;
+                    daysLeft = Mathf.Max(1, def.daysSaplingToMature);
+                    break;
+                case PlantStage.Sapling:
+                    stage = PlantStage.Mature;
+                    daysLeft = Mathf.Max(1, def.daysMatureToFruiting);
+                    break;
+                case PlantStage.Mature:
+                    stage = PlantStage.Fruiting;
+                    daysLeft = 0;
+                    break;
+            }
+        }
+
+        // visszaírjuk a mentésbe – innen olvassa majd a RestoreFromSave()
+        GameData.I.WritePlant(greenhouseIdCached, bedKeyCached, def, stage, daysLeft);
+        Debug.Log($"[BedPlot] Day {newDay}: wateredYesterday={wateredYesterday}, stage={s.stage}, left={s.daysLeftInStage}");
+        if (GameData.I == null || !KeysValid()) return;
+    }
     // ----------------- VIZUÁL HELPER-EK -----------------
 
     void ClearVisuals()
@@ -182,6 +290,12 @@ public class BedPlot : MonoBehaviour, IInteractable
             var def = GameData.I.ResolveDef(s.plantDefId);
             if (def == null) return;
 
+            // --- CATCH-UP: pótoljuk a kimaradt napokat a mentésben ---
+            CatchUpGrowthInSave(def);
+
+            // friss állapot (mert fent írhattunk a mentésbe)
+            s = GameData.I.GetOrCreateBed(greenhouseIdCached, bedKeyCached);
+
             // három vizuális példányt készítünk
             SpawnVisualPlants(def, s.stage, s.daysLeftInStage);
 
@@ -189,11 +303,11 @@ public class BedPlot : MonoBehaviour, IInteractable
         }
         else
         {
-            // üres ágyás
             ClearVisuals();
             currentPlant = null;
         }
     }
+
 
     void ForcePlantState(PlantActor plant, PlantStage stage, int daysLeft)
     {
@@ -350,5 +464,60 @@ public class BedPlot : MonoBehaviour, IInteractable
 
         int daysLeft = currentPlant.GetDaysLeftExternal();
         GameData.I.WritePlant(greenhouseIdCached, bedKeyCached, currentPlant.def, currentPlant.stage, daysLeft);
+    }
+    void CatchUpGrowthInSave(PlantDefinition def)
+    {
+        if (GameData.I == null || !KeysValid() || def == null) return;
+
+        var s = GameData.I.GetOrCreateBed(greenhouseIdCached, bedKeyCached);
+        if (s == null || !s.hasPlant || string.IsNullOrEmpty(s.plantDefId)) return;
+        if (s.stage == PlantStage.Fruiting || s.stage == PlantStage.Withered) return;
+
+        int today = Today();
+        if (today < 0) return;
+
+        // Ha sosem volt értelmes locsolás-nap, nincs mit pótolni
+        int startDay = Mathf.Max(0, s.lastWateredDay);
+        if (today <= startDay) return;
+
+        // Kiinduló állapot
+        var stage = s.stage;
+        int daysLeft = Mathf.Max(0, s.daysLeftInStage);
+
+        // Végigmegyünk a (lastWateredDay + 1) .. today napokon.
+        // Minden nap elején a tegnapi locsolás számít.
+        for (int day = startDay + 1; day <= today; day++)
+        {
+            bool wateredYesterday = GameData.I.IsWatered(greenhouseIdCached, bedKeyCached, day - 1);
+            if (!wateredYesterday) continue;
+
+            daysLeft = Mathf.Max(0, daysLeft - 1);
+
+            if (daysLeft <= 0)
+            {
+                switch (stage)
+                {
+                    case PlantStage.Seed:
+                        stage = PlantStage.Sapling;
+                        daysLeft = Mathf.Max(1, def.daysSaplingToMature);
+                        break;
+
+                    case PlantStage.Sapling:
+                        stage = PlantStage.Mature;
+                        daysLeft = Mathf.Max(1, def.daysMatureToFruiting);
+                        break;
+
+                    case PlantStage.Mature:
+                        stage = PlantStage.Fruiting;
+                        daysLeft = 0;
+                        break;
+                }
+            }
+        }
+
+        // Írjuk vissza – innen dolgozik a Restore vizuálja
+        GameData.I.WritePlant(greenhouseIdCached, bedKeyCached, def, stage, daysLeft);
+
+        Debug.Log($"[BedPlot] CatchUp bed={bedKeyCached}  from lastWatered={startDay} to today={today}  -> {stage}/{daysLeft}");
     }
 }

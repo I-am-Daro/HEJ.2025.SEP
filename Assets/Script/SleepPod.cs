@@ -23,6 +23,8 @@ public class SleepPod : MonoBehaviour, IInteractable
     [SerializeField] float fadeInDuration = 0.35f;
     [SerializeField] float blackHoldDuration = 0.80f;
     [SerializeField] float fadeOutDuration = 0.35f;
+    [SerializeField] string fadeCanvasTag = "SleepFade";       // tedd ezt a Tag-et a fade panel GO-ra (opcionális)
+    [SerializeField] string fadeCanvasName = "SleepFadeCanvas"; // vagy adj neki ezt a nevet (opcionális)
 
     [Header("Day label on black (optional)")]
     [Tooltip("TMP felirat a nap kiírásához (előnyben részesített).")]
@@ -57,36 +59,84 @@ public class SleepPod : MonoBehaviour, IInteractable
         StartCoroutine(SleepSequence(player));
     }
 
+   
+
+    void OnEnable() { RebindFadeCanvas(); }
+
+    void RebindFadeCanvas()
+    {
+        if (fadeCanvas && fadeCanvas.gameObject) return;
+
+        CanvasGroup cg = null;
+
+        if (!string.IsNullOrEmpty(fadeCanvasTag))
+        {
+            var go = GameObject.FindGameObjectWithTag(fadeCanvasTag);
+            if (go) cg = go.GetComponentInChildren<CanvasGroup>(true);
+        }
+        if (!cg && !string.IsNullOrEmpty(fadeCanvasName))
+        {
+            var go = GameObject.Find(fadeCanvasName);
+            if (go) cg = go.GetComponentInChildren<CanvasGroup>(true);
+        }
+        if (!cg)
+        {
+            // végső fallback: első elérhető CanvasGroup (InActive-ben is keres)
+#if UNITY_2022_3_OR_NEWER
+        cg = FindFirstObjectByType<CanvasGroup>(FindObjectsInactive.Include);
+#else
+            cg = FindObjectOfType<CanvasGroup>(true);
+#endif
+        }
+
+        fadeCanvas = cg;
+
+        // új panel → a felirat referenciákat kerestessük újra
+        dayLabelTMP = null;
+        dayLabelUI = null;
+
+        // tegyük ismert állapotba
+        if (fadeCanvas)
+        {
+            fadeCanvas.gameObject.SetActive(true);
+            fadeCanvas.alpha = 0f;
+            fadeCanvas.blocksRaycasts = false;
+        }
+    }
+
     IEnumerator SleepSequence(PlayerStats player)
     {
-        // 0) ha nincs fadeCanvas, akkor is fusson – csak azonnali „vágással”
-        EnsureDayLabelRefs();
+        RebindFadeCanvas();          // << ÚJ
+        EnsureDayLabelRefs();        // (ez most már az új panel alatt keres)
 
-        // 1) mozgás lock
         MovementLock mlock = default;
         if (lockMovementDuringSleep) mlock = MovementLock.Apply(player.gameObject);
 
-        // 2) fade to black
+        // induláskor biztosan elérhető és látható-e a panel GO
+        if (fadeCanvas)
+        {
+            fadeCanvas.gameObject.SetActive(true);
+            fadeCanvas.blocksRaycasts = true;   // blokkolja az inputot a fade alatt
+        }
+
+        // fade in
         yield return FadeTo(1f, fadeInDuration);
 
-        // 3) fekete alatt: alvás hatásai + napváltás + mentés
         ApplySleepEffects(player);
 
-        // 4) nap felirat megjelenítése a fekete fázis alatt (az új nap száma!)
         if (showDayOnFade)
         {
             int day = DayNightSystem.Instance ? DayNightSystem.Instance.CurrentDay : 1;
             SetDayLabelVisible(true, $"{dayPrefix}{day}");
         }
 
-        // 5) kis ideig fekete képernyő (felirat látszik)
         if (blackHoldDuration > 0f) yield return new WaitForSeconds(blackHoldDuration);
 
-        // 6) elrejtjük a feliratot és kifade-elünk
         if (showDayOnFade) SetDayLabelVisible(false, null);
         yield return FadeTo(0f, fadeOutDuration);
 
-        // 7) mozgás vissza
+        if (fadeCanvas) fadeCanvas.blocksRaycasts = false;
+
         if (lockMovementDuringSleep) mlock.Release(restoreOnlyPlatformer);
 
         Debug.Log("[SleepPod] Slept: effects applied, new day started.");
@@ -127,9 +177,15 @@ public class SleepPod : MonoBehaviour, IInteractable
 
     IEnumerator FadeTo(float targetAlpha, float duration)
     {
-        if (!fadeCanvas || duration <= 0f)
+        if (!fadeCanvas)
         {
-            if (fadeCanvas) fadeCanvas.alpha = targetAlpha;
+            RebindFadeCanvas();
+            if (!fadeCanvas) { yield return null; yield break; }
+        }
+
+        if (duration <= 0f)
+        {
+            fadeCanvas.alpha = targetAlpha;
             yield return null;
             yield break;
         }
@@ -145,6 +201,7 @@ public class SleepPod : MonoBehaviour, IInteractable
         }
         fadeCanvas.alpha = targetAlpha;
     }
+
 
     // -------- Day label helpers --------
     void EnsureDayLabelRefs()

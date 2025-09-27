@@ -218,17 +218,37 @@ public class AnalyzerStation : MonoBehaviour, IInteractable
 
     public void AcceptResults(PlayerInventory inv)
     {
-        if (pendingResults == null || inv == null) return;
+        if (pendingResults == null) return;
 
-        foreach (var g in pendingResults.resources)
-            if (g.amount > 0) inv.AddResource(g.type, g.amount);
+        // Keresünk PlayerStats-ot (egyjátékosnál elég ez)
+        var stats = FindFirstObjectByType<PlayerStats>(FindObjectsInactive.Exclude);
+
+        if (pendingResults.resources != null)
+        {
+            foreach (var g in pendingResults.resources)
+            {
+                if (g.amount <= 0) continue;
+
+                if (g.type == ResourceType.Water && stats != null)
+                {
+                    float before = stats.water;
+                    stats.water = Mathf.Clamp(stats.water + g.amount, 0f, 100f);
+                    Debug.Log($"[Analyzer] Water +{g.amount}  ({before} -> {stats.water})");
+                }
+                else
+                {
+                    inv?.AddResource(g.type, g.amount);
+                }
+            }
+        }
 
         if (pendingResults.seedDef && pendingResults.seedAmount > 0)
-            inv.AddSeed(pendingResults.seedDef, pendingResults.seedAmount);
+            inv?.AddSeed(pendingResults.seedDef, pendingResults.seedAmount);
 
         pendingResults = null;
         OnResultsAccepted?.Invoke();
     }
+
 
     // ---------- Audio helper ----------
     void PlaySfx(AudioClip clip)

@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: Building_GravityEmitter
   displayName: Gravity Emitter
-  icon: {fileID: -9095717837082945937, guid: 009224d67d63df748a24292391359ec3, type: 3}
-  prefab: {fileID: 0}
+  icon: {fileID: 0}
+  prefab: {fileID: 4928066411793897872, guid: 857718307ea88714094ce0851d3817ab, type: 3}
   size: {x: 1, y: 1}
   blockMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 640
   canRotate: 0
-  forbidNearTagged: 0
+  forbidNearTagged: 1
   nearTag: Spaceship
-  minDistance: 6
-  ironCost: 90
+  minDistance: 5
+  ironCost: 80
