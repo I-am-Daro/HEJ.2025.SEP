@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: Pipe_horisontal
   displayName: Horisontal Pipe
-  icon: {fileID: 7482667652216324306, guid: d6c7574b9081e3f4b973cc8fed9da0cb, type: 3}
+  icon: {fileID: 0}
   prefab: {fileID: 2571914325048733067, guid: 4e38c0b4bef92a1478a8c25fa8091da7, type: 3}
   size: {x: 1, y: 1}
   blockMask:
@@ -23,5 +23,5 @@ MonoBehaviour:
   canRotate: 1
   forbidNearTagged: 0
   nearTag: Spaceship
-  minDistance: 6
+  minDistance: 0
   ironCost: 2

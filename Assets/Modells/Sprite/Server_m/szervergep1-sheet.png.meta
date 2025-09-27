@@ -134,6 +134,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -141,10 +154,10 @@ TextureImporter:
       name: szervergep1-sheet_0
       rect:
         serializedVersion: 2
-        x: 11
-        y: 10
-        width: 39
-        height: 22
+        x: 12
+        y: 11
+        width: 37
+        height: 21
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -163,10 +176,10 @@ TextureImporter:
       name: szervergep1-sheet_1
       rect:
         serializedVersion: 2
-        x: 75
-        y: 10
-        width: 39
-        height: 22
+        x: 76
+        y: 11
+        width: 37
+        height: 21
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -185,10 +198,10 @@ TextureImporter:
       name: szervergep1-sheet_2
       rect:
         serializedVersion: 2
-        x: 139
-        y: 10
-        width: 39
-        height: 22
+        x: 140
+        y: 11
+        width: 37
+        height: 21
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -207,10 +220,10 @@ TextureImporter:
       name: szervergep1-sheet_3
       rect:
         serializedVersion: 2
-        x: 203
-        y: 10
-        width: 39
-        height: 22
+        x: 204
+        y: 11
+        width: 37
+        height: 21
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -229,10 +242,10 @@ TextureImporter:
       name: szervergep1-sheet_4
       rect:
         serializedVersion: 2
-        x: 267
-        y: 10
-        width: 39
-        height: 22
+        x: 268
+        y: 11
+        width: 37
+        height: 21
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -251,7 +264,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 6a113b587e44e1b4e984d97fad54f4ab
     internalID: 0
     vertices: []
     indices: 

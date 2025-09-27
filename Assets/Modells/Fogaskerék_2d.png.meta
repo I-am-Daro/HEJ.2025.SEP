@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      "Fogasker\xE9k_2d_0": -3165348872880664062
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

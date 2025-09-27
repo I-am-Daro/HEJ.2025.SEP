@@ -24,4 +24,4 @@ MonoBehaviour:
   fruitingSprite: {fileID: 1264654456293661167, guid: 53538b5a6df864b4a8416186b6a0db66, type: 3}
   witheredSprite: {fileID: 6267157493650333817, guid: 4054382653a706247b25147225b3a6ff, type: 3}
   produceType: 2
-  produceAmount: 10
+  produceAmount: 25

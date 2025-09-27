@@ -183,6 +183,44 @@ public class GameData : MonoBehaviour
         if (string.IsNullOrEmpty(stableId)) return;
         ironRespawns.Remove(stableId);
     }
+    // --- PERSIST API az RockPickup-hoz ---
+
+    /// Mentett állapot lekérése. Visszatér true, ha találtunk mentést.
+    public bool TryGetRockRespawn(string stableId, out bool available, out int nextAvailableDay)
+    {
+        available = true;
+        nextAvailableDay = int.MinValue;
+
+        if (string.IsNullOrEmpty(stableId)) return false;
+        if (ironRespawns.TryGetValue(stableId, out var s) && s != null)
+        {
+            available = s.available;
+            nextAvailableDay = s.nextAvailableDay;
+            return true;
+        }
+        return false;
+    }
+
+    /// Mentés/overwrite az adott StableId-hez.
+    public void WriteRockRespawn(string stableId, bool available, int nextAvailableDay)
+    {
+        if (string.IsNullOrEmpty(stableId)) return;
+
+        if (!ironRespawns.TryGetValue(stableId, out var s) || s == null)
+        {
+            s = new IronRespawnSave();
+            ironRespawns[stableId] = s;
+        }
+        s.available = available;
+        s.nextAvailableDay = nextAvailableDay;
+    }
+
+    /// Teljes törlés (pl. ha destroy-olod a pickupot).
+    public void ClearRockRespawn(string stableId)
+    {
+        if (string.IsNullOrEmpty(stableId)) return;
+        ironRespawns.Remove(stableId);
+    }
 
 
     // -----------------------------

@@ -4,6 +4,8 @@ public enum SceneKind { Exterior, Interior }
 
 public class SceneMovementBoot : MonoBehaviour
 {
+    public static SceneKind CurrentSceneKind { get; private set; }
+
     [SerializeField] SceneKind sceneKind = SceneKind.Exterior;
 
     [Header("Player Scale")]
@@ -12,6 +14,8 @@ public class SceneMovementBoot : MonoBehaviour
 
     void Start()
     {
+        CurrentSceneKind = sceneKind;   // <<< itt állítjuk be a globális értéket
+
         var player = GameObject.FindGameObjectWithTag("Player");
         if (!player) return;
 

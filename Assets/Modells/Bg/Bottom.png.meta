@@ -138,19 +138,6 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WindowsStoreApps
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -158,9 +145,9 @@ TextureImporter:
       name: Bottom_0
       rect:
         serializedVersion: 2
-        x: 123
+        x: 124
         y: 0
-        width: 1731
+        width: 1729
         height: 161
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -168,10 +155,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 374c95942ee2c24f0800000000000000
-      internalID: -852254680051760013
+      spriteID: f8eb5b9847c7b0146baff67856a6f353
+      internalID: 1380962236
       vertices: []
       indices: 
       edges: []
@@ -180,20 +167,20 @@ TextureImporter:
       name: Bottom_1
       rect:
         serializedVersion: 2
-        x: 327
-        y: 2
-        width: 15
-        height: 15
+        x: 328
+        y: 3
+        width: 13
+        height: 13
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: cbe6d3557eea55cd0800000000000000
-      internalID: -2569955703754232132
+      spriteID: a9495d111d63240418889dad3c0b0e1b
+      internalID: -1325671891
       vertices: []
       indices: 
       edges: []
@@ -202,7 +189,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: f374e326640236041a64dc88f3defaf2
     internalID: 0
     vertices: []
     indices: 
@@ -212,7 +199,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Bottom_0: -852254680051760013
+      Bottom_0: 1380962236
+      Bottom_1: -1325671891
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,16 +1,21 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio; // <<< kell a mixerhez
 
 public class ElevatorDoor : MonoBehaviour
 {
     [SerializeField] Animator animator;
     [SerializeField] string boolParam = "IsOpen";
 
-    // Animator state nevek (az állapotok „végi” képkockájára ugrunk SnapTo-kor)
     [SerializeField] string closedStateName = "Closed";
     [SerializeField] string openStateName = "Open";
 
     [SerializeField] SpriteRenderer frontOverlay;
+
+    // ---------- MIXER ROUTING ----------
+    [Header("Mixer Routing")]
+    [Tooltip("Ide tedd a SFX AudioMixerGroup-ot (az Options csúszka ezt állítja).")]
+    [SerializeField] AudioMixerGroup sfxMixerGroup;   // <<<
 
     // ---------- SFX ----------
     [Header("SFX")]
@@ -30,13 +35,8 @@ public class ElevatorDoor : MonoBehaviour
     public float closeMaxDuration = 0f;
 
     [Header("Sync SFX to Animation")]
-    [Tooltip("Ha be van kapcsolva, a hang a megadott animáció hosszához igazodik.")]
     public bool syncSfxToAnimation = true;
-
-    [Tooltip("Ha itt megadod a nyitó animáció klipjét, pontosan ezt vesszük alapul a hosszhoz.")]
     public AnimationClip openAnimClip;
-
-    [Tooltip("Ha itt megadod a záró animáció klipjét, pontosan ezt vesszük alapul a hosszhoz.")]
     public AnimationClip closeAnimClip;
 
     Coroutine playingCo;
@@ -55,6 +55,11 @@ public class ElevatorDoor : MonoBehaviour
             audioSource.loop = false;
             audioSource.spatialBlend = 0f; // 2D
         }
+
+        // >>> A LÉNYEG: az AudioSource a SFX mixer groupra menjen
+        if (sfxMixerGroup != null)
+            audioSource.outputAudioMixerGroup = sfxMixerGroup;
+        // Ha itt null marad, az AudioSource „Master”-re megy – ilyenkor a SFX csúszka nem fogja szabályozni.
     }
 
     // --- instant állapot ---
@@ -69,7 +74,7 @@ public class ElevatorDoor : MonoBehaviour
         if (frontOverlay) frontOverlay.enabled = open;
     }
 
-    // duration: opcionális várakozási idő a coroutine végén (nem befolyásolja a hangot)
+    // duration: opcionális várakozás a coroutine végén (nem befolyásolja a hangot)
     public IEnumerator Open(float duration)
     {
         if (animator) animator.SetBool(boolParam, true);
@@ -118,7 +123,7 @@ public class ElevatorDoor : MonoBehaviour
         if (playingCo != null) StopCoroutine(playingCo);
 
         audioSource.clip = clip;
-        audioSource.volume = vol;
+        audioSource.volume = vol;     // helyi (pre-mixer) hangerő
         audioSource.pitch = pitch;
         audioSource.Play();
 
@@ -139,20 +144,13 @@ public class ElevatorDoor : MonoBehaviour
     float ComputeSfxDuration(AnimationClip preferClip, string fallbackStateOrClipName,
                              float animatorSpeed, float pitch, float maxDuration)
     {
-        // Ha nem kérünk szinkront, akkor csak a maxDuration limit érvényes (0 = nincs limit)
         if (!syncSfxToAnimation)
             return Mathf.Max(0f, maxDuration);
 
         AnimationClip clip = preferClip ? preferClip : FindClipByName(fallbackStateOrClipName);
-
         if (clip == null)
-        {
-            // nincs klip → nincs pontos idő, marad csak a maxDuration (0 = nincs limit)
             return Mathf.Max(0f, maxDuration);
-        }
 
-        // Valós lejátszási idő = (anim clip hossz / animatorSpeed)
-        // A hanghoz pedig még a pitch is számít: ha a hang gyorsabb (pitch>1), rövidebb legyen
         float animTime = clip.length / Mathf.Max(0.01f, animatorSpeed);
         float sfxTime = animTime / Mathf.Max(0.01f, pitch);
 
@@ -163,20 +161,23 @@ public class ElevatorDoor : MonoBehaviour
     AnimationClip FindClipByName(string nameOrState)
     {
         if (!animator || animator.runtimeAnimatorController == null) return null;
-
         var clips = animator.runtimeAnimatorController.animationClips;
         if (clips == null || clips.Length == 0) return null;
 
-        // 1) pontos név egyezés (legtöbbször a state neve megegyezik a klip nevével)
         for (int i = 0; i < clips.Length; i++)
-            if (clips[i] && clips[i].name == nameOrState)
-                return clips[i];
+            if (clips[i] && clips[i].name == nameOrState) return clips[i];
 
-        // 2) részleges egyezés (hátha a state neve tartalmazza a klip nevét vagy fordítva)
         for (int i = 0; i < clips.Length; i++)
             if (clips[i] && (clips[i].name.Contains(nameOrState) || nameOrState.Contains(clips[i].name)))
                 return clips[i];
 
         return null;
+    }
+
+    // ---- Extra kényelmi függvény, ha kódból szeretnéd állítani:
+    public void SetMixerGroup(AudioMixerGroup group)
+    {
+        sfxMixerGroup = group;
+        if (audioSource) audioSource.outputAudioMixerGroup = group;
     }
 }

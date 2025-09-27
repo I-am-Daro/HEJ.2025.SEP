@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Iron Bark_64x64_0: 7305523767643361364
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -83,7 +83,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.058403, y: 0.12888086}
+  m_Offset: {x: 0.157493, y: 0.020004392}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -93,7 +93,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.7383127, y: 2.6276076}
+  m_Size: {x: 0.72871757, y: 1.0825999}
   m_EdgeRadius: 0
 --- !u!1 &3314648705080520215
 GameObject:
@@ -276,8 +276,8 @@ GameObject:
   - component: {fileID: 5469132712000351471}
   - component: {fileID: 9174185994915811136}
   - component: {fileID: 5464130477753612473}
-  - component: {fileID: 5858005102111092220}
   - component: {fileID: 1088494659686351694}
+  - component: {fileID: 3070907400671094764}
   m_Layer: 7
   m_Name: Spaceship
   m_TagString: Spaceship
@@ -345,7 +345,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: -5201694075824803732, guid: 6ffd7fbd4c7c204459ccaabe9de014a0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -384,8 +384,24 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
---- !u!70 &5858005102111092220
-CapsuleCollider2D:
+--- !u!114 &1088494659686351694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8103099812640413483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f72f0791d43644d4b99e63764a4cdd8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isSource: 1
+  isConduit: 1
+  linkRadius: 2
+  connectedToSource: 1
+--- !u!61 &3070907400671094764
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -418,22 +434,15 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.05008342, y: -0.004763007}
-  m_Size: {x: 1.0935825, y: 2.3334115}
-  m_Direction: 0
---- !u!114 &1088494659686351694
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8103099812640413483}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f72f0791d43644d4b99e63764a4cdd8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isSource: 1
-  isConduit: 1
-  linkRadius: 2
-  connectedToSource: 1
+  m_Offset: {x: 0, y: -0.20383093}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.81, y: 1.19}
+    newSize: {x: 1, y: 2}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.81, y: 0.7823382}
+  m_EdgeRadius: 0

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;   // <<< ÚJ
 
 [RequireComponent(typeof(Collider2D))]
 public class FoodDispenser : MonoBehaviour, IInteractable
@@ -21,6 +22,10 @@ public class FoodDispenser : MonoBehaviour, IInteractable
     public AudioClip eatSfx;
     public AudioClip closeSfx;
 
+    [Header("Audio Routing")]
+    [Tooltip("Kösd ide a Mixer SFX csoportját, hogy az Options SFX csúszka ezt is szabályozza.")]
+    [SerializeField] AudioMixerGroup sfxBus;   // <<< ÚJ
+
     [Header("Control")]
     public bool lockMovementDuringUse = true;
 
@@ -33,6 +38,30 @@ public class FoodDispenser : MonoBehaviour, IInteractable
     {
         GetComponent<Collider2D>().isTrigger = true;
         if (!animator) animator = GetComponentInChildren<Animator>();
+    }
+
+    void Awake()
+    {
+        if (!sfxSource)
+        {
+            sfxSource = gameObject.AddComponent<AudioSource>();
+            sfxSource.playOnAwake = false;
+            sfxSource.loop = false;
+            sfxSource.spatialBlend = 0f; // 2D SFX
+        }
+        ApplyMixerGroup();  // <<< ÚJ
+    }
+
+    void OnValidate()
+    {
+        // Inspectorban késõbb beállított Sfx Bus azonnal érvényesüljön
+        ApplyMixerGroup();  // <<< ÚJ
+    }
+
+    void ApplyMixerGroup()
+    {
+        if (sfxSource && sfxBus)
+            sfxSource.outputAudioMixerGroup = sfxBus;
     }
 
     public string GetPrompt() => inUse ? "" : "Eat (E)";
@@ -81,8 +110,7 @@ public class FoodDispenser : MonoBehaviour, IInteractable
         Play(closeSfx);
         if (closeDuration > 0f) yield return new WaitForSeconds(closeDuration);
 
-        // 5) Mozgás unlock — csak ami eredetileg is aktív volt,
-        //    és ha restoreOnlyPlatformer=true, akkor a platformerre korlátozva
+        // 5) Mozgás unlock
         if (lockMovementDuringUse) mlock.Release(restoreOnlyPlatformer);
 
         inUse = false;
@@ -156,7 +184,6 @@ public class FoodDispenser : MonoBehaviour, IInteractable
 
         public void Release(bool onlyPlatformer)
         {
-            // visszaállítjuk, amit ELÕTTE is használt a player
             if (onlyPlatformer)
             {
                 if (plat2D) plat2D.enabled = plat2DWasOn;   // csak platformer
