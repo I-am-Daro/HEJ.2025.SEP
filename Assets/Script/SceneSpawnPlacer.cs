@@ -6,6 +6,7 @@ public class SceneSpawnPlacer : MonoBehaviour
 {
     void Awake()
     {
+        if (SceneManager.GetActiveScene().name == "MainMenu") return;
         DontDestroyOnLoad(gameObject);
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
