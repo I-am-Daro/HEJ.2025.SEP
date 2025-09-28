@@ -18,10 +18,10 @@ MonoBehaviour:
   daysSaplingToMature: 1
   daysMatureToFruiting: 1
   regrowDaysAfterHarvest: 3
-  seedSprite: {fileID: 5346928031986697999, guid: e32688dff71bf2640a4e771c0f28e8f7, type: 3}
-  saplingSprite: {fileID: -4985580795451481042, guid: 0aa0f00175098804b9ddc0d93747d636, type: 3}
-  matureSprite: {fileID: -596375226648447219, guid: 3709d1c45b15b5342a0f825c24977168, type: 3}
-  fruitingSprite: {fileID: 1264654456293661167, guid: 53538b5a6df864b4a8416186b6a0db66, type: 3}
-  witheredSprite: {fileID: 6267157493650333817, guid: 4054382653a706247b25147225b3a6ff, type: 3}
+  seedSprite: {fileID: -7939553746654515173, guid: b45848f13f491e14a9730bbf99dc2c93, type: 3}
+  saplingSprite: {fileID: 2997613460727553847, guid: 289bcd488ee7ccd488e247dfe3c8b0ad, type: 3}
+  matureSprite: {fileID: 1654006958625552825, guid: d9f2279e31b37b548ae07737556786e9, type: 3}
+  fruitingSprite: {fileID: 6274813473469032052, guid: be4b185027290ae468eab5365e3e87fc, type: 3}
+  witheredSprite: {fileID: 9014835403670039752, guid: 0ee794d086001384cb4907f897e5f391, type: 3}
   produceType: 2
   produceAmount: 25

@@ -36,6 +36,23 @@ public class BuildManager : MonoBehaviour
     float rotZ;
     int ghostLayer = -1;
 
+    [Header("Snapping / Placement tuning")]
+    [Tooltip("Gyerek Transform neve a prefabban, ami a rácsra illeszt – ha nincs, a gyökér megy.")]
+    public string snapAnchorName = "SnapAnchor";
+
+    [Tooltip("Ennyivel húzzuk össze az OverlapBox-ot lerakás ellenőrzésnél (world units).")]
+    public float placeClearance = 0.04f; // ~ 4 cm 1-es rácsnál
+    public bool allowMultipleAnchors = true;
+    public float anchorSwitchHysteresis = 0.20f; // világ-egység
+#if ENABLE_INPUT_SYSTEM
+public UnityEngine.InputSystem.Key cycleAnchorKey = UnityEngine.InputSystem.Key.Tab;
+#endif
+
+    // runtime
+    List<Transform> ghostAnchors = new List<Transform>(4);
+    int activeAnchorIdx = 0;
+    Transform ActiveAnchor => ghostAnchors != null && ghostAnchors.Count > 0 ? ghostAnchors[activeAnchorIdx] : (ghost ? ghost.transform : null);
+
     // <<< ÚJ: játékos inv cache az ár-ellenőrzéshez >>>
     PlayerInventory cachedInv;
 
@@ -115,12 +132,43 @@ public class BuildManager : MonoBehaviour
         var mouse = Mouse.current;
         if (mouse == null) return;
 
+        // rácspontra kerekített cél
         Vector3 m = MouseWorld(mouse.position.ReadValue());
         m.z = 0f;
         m.x = Mathf.Round(m.x / gridSize) * gridSize;
         m.y = Mathf.Round(m.y / gridSize) * gridSize;
-        ghost.transform.position = m;
 
+        // --- több anchor kezelése ---
+        if (allowMultipleAnchors && ghostAnchors.Count > 1)
+        {
+            // kézi ciklizés (pl. Tab)
+#if ENABLE_INPUT_SYSTEM
+        if (Keyboard.current != null && Keyboard.current[cycleAnchorKey].wasPressedThisFrame)
+            activeAnchorIdx = (activeAnchorIdx + 1) % ghostAnchors.Count;
+#endif
+            // automatikus: egérhez legközelebbi anchor – kis hiszterézissel, hogy ne pattogjon
+            Vector3 mouseWorld = MouseWorld(mouse.position.ReadValue());
+            int best = activeAnchorIdx;
+            float bestD2 = (ghostAnchors[best].position - mouseWorld).sqrMagnitude;
+            for (int i = 0; i < ghostAnchors.Count; i++)
+            {
+                float d2 = (ghostAnchors[i].position - mouseWorld).sqrMagnitude;
+                if (d2 < bestD2) { bestD2 = d2; best = i; }
+            }
+            float curD2 = (ghostAnchors[activeAnchorIdx].position - mouseWorld).sqrMagnitude;
+            if (best != activeAnchorIdx &&
+                (curD2 - bestD2) > (anchorSwitchHysteresis * anchorSwitchHysteresis))
+            {
+                activeAnchorIdx = best;
+            }
+        }
+
+        // az aktív anchor pontosan a rácspontra üljön
+        var anchor = ActiveAnchor;                       // <<<< NINCS többé ghostAnchor változó
+        Vector3 delta = anchor.position - ghost.transform.position;
+        ghost.transform.position = m - delta;
+
+        // forgatás
         if (currentDef.canRotate && Keyboard.current != null && Keyboard.current[rotateKey].wasPressedThisFrame)
         {
             rotZ = (rotZ + 90f) % 360f;
@@ -134,6 +182,7 @@ public class BuildManager : MonoBehaviour
         else if (mouse.rightButton.wasPressedThisFrame || (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame))
             CancelPlacement();
     }
+
 
     Vector3 MouseWorld(Vector2 screenPos)
     {
@@ -160,8 +209,22 @@ public class BuildManager : MonoBehaviour
             return false;
 
         // 1) blokk ütközés
-        var hits = Physics2D.OverlapBoxAll(pos, def.size, rot, def.blockMask);
-        if (hits != null && hits.Length > 0) return false;
+        Vector2 sz = def.size;
+        if (placeClearance > 0f)
+        {
+            sz.x = Mathf.Max(0.02f, sz.x - placeClearance * 2f);
+            sz.y = Mathf.Max(0.02f, sz.y - placeClearance * 2f);
+        }
+
+        // FONTOS: a ghost aktuális helye a jó középpont (már anchorra igazítva)
+        var hits = Physics2D.OverlapBoxAll(ghost.transform.position, sz, rot, def.blockMask);
+
+        if (hits != null && hits.Length > 0)
+        {
+            // ha kell, itt kiszűrheted azokat, amiket ignorálni szeretnél (pl. csak trigger),
+            // de általában a kisebb szelence önmagában elég.
+            return false;
+        }
 
         // 2) def szerinti távolságszabály
         if (def.forbidNearTagged && !string.IsNullOrEmpty(def.nearTag) && def.minDistance > 0f)
@@ -205,14 +268,14 @@ public class BuildManager : MonoBehaviour
             }
         }
 
-        var go = Instantiate(def.prefab, pos, Quaternion.Euler(0, 0, rot));
+        var go = Instantiate(def.prefab, ghost.transform.position, ghost.transform.rotation);
         go.name = def.displayName;
 
         var sid = StableId.AddTo(go);
         sid.AssignNewRuntimeId();
         string id = sid.Id;
 
-        GameData.I?.RegisterPlaced(id, def.id, pos, rot);
+        GameData.I?.RegisterPlaced(id, def.id, go.transform.position, go.transform.eulerAngles.z);
 
         var anyNode = go.GetComponentInChildren<PowerNode>(true);
         if (anyNode) PowerGrid.I?.Rebuild();
@@ -264,8 +327,26 @@ public class BuildManager : MonoBehaviour
         if (ghostSprites == null || ghostSprites.Length == 0)
             Debug.LogWarning("[BuildManager] Ghost has no SpriteRenderer (might be invisible).");
 
+        // --- TÖBB ANCHOR összegyűjtése ---
+        ghostAnchors.Clear();
+        if (!string.IsNullOrEmpty(snapAnchorName))
+        {
+            var stack = new Stack<Transform>();
+            stack.Push(ghost.transform);
+            while (stack.Count > 0)
+            {
+                var t = stack.Pop();
+                if (t.name == snapAnchorName) ghostAnchors.Add(t);
+                for (int i = 0; i < t.childCount; i++) stack.Push(t.GetChild(i));
+            }
+        }
+        if (ghostAnchors.Count == 0) ghostAnchors.Add(ghost.transform); // fallback, ha nincs SnapAnchor
+
+        activeAnchorIdx = 0;
+
         SetGhostColor(okColor);
     }
+
 
     void SetGhostColor(Color c)
     {

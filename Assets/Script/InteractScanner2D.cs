@@ -7,71 +7,67 @@ using UnityEngine.InputSystem;
 public class InteractScanner2D : MonoBehaviour
 {
     [Header("Scan")]
-    public float scanRadius = 2.0f;
+    public float scanRadius = 2f;
     public LayerMask candidateMask = ~0;
 
     [Header("Behavior")]
     public bool callInteractOnKey = false;
-
-    [Header("Anchor")]
-    public Transform worldAnchor;             // <<< Húzd be ide a Player/HandAnchor-t
-    public string fallbackAnchorChildName = "HandAnchor";
-    public float verticalWorldOffset = 0.0f;  // ha HandAnchor-t használsz, ez lehet 0
 
     [Header("Key")]
     public KeyCode legacyKey = KeyCode.E;
 #if ENABLE_INPUT_SYSTEM
     public Key inputKey = Key.E;
 #endif
+    [Header("Anchor")]
+    [SerializeField] Transform worldAnchor;          // Player/HandAnchor
+    [SerializeField] float verticalWorldOffset = 0.0f;
 
-    Camera cam;
-    InteractHintUI hint;
-    IInteractable current; Transform currentTransform;
+    [Header("UI")]
+    [SerializeField] InteractHintUI hint;
+
+
+    // --- ÚJ: a buborék ref-je (gyerek komponens) ---
+    [SerializeField] PlayerInteractHintUI hintUI;
+
+    IInteractable current;
+    Transform currentTransform;
     readonly Collider2D[] results = new Collider2D[24];
 
     void Start()
     {
-        cam = Camera.main ? Camera.main : FindFirstObjectByType<Camera>();
-
-#if UNITY_2022_3_OR_NEWER
-        hint = FindFirstObjectByType<InteractHintUI>(FindObjectsInactive.Include);
-#else
-        hint = FindObjectOfType<InteractHintUI>(true);
-#endif
-
         if (!worldAnchor)
         {
-            var t = transform.Find(fallbackAnchorChildName);
+            var t = transform.Find("HandAnchor");
             if (t) worldAnchor = t;
         }
+#if UNITY_2022_3_OR_NEWER
+        if (!hint) hint = FindFirstObjectByType<InteractHintUI>(FindObjectsInactive.Include);
+#else
+        if (!hint) hint = FindObjectOfType<InteractHintUI>(true);
+#endif
     }
 
     void Update()
     {
-        var hit = FindNearestInteractable();
+        var hit = FindNearestInteractable(); // a te meglévõ logikád
+
         if (hit.i != null)
         {
-            current = hit.i; currentTransform = hit.t;
+            Vector3 anchorWorldPos =
+                (worldAnchor ? worldAnchor.position : transform.position) +
+                Vector3.up * verticalWorldOffset;
 
-            if (hint)
-            {
-                Vector3 anchorPos = worldAnchor ? worldAnchor.position : transform.position;
-                anchorPos += Vector3.up * verticalWorldOffset;
-                hint.Show(anchorPos, BuildPrompt(current));
-            }
+            hint?.Show(anchorWorldPos, BuildPrompt(hit.i));
 
             if (callInteractOnKey && IsInteractPressed())
-            {
-                var stats = GetComponent<PlayerStats>();
-                current.Interact(stats);
-            }
+                hit.i.Interact(GetComponent<PlayerStats>());
         }
         else
         {
-            current = null; currentTransform = null;
-            if (hint) hint.Hide();
+            hint?.Hide();
         }
     }
+
 
     (IInteractable i, Transform t) FindNearestInteractable()
     {
@@ -106,11 +102,9 @@ public class InteractScanner2D : MonoBehaviour
         string key = legacyKey.ToString().ToUpper();
 #endif
         string basePrompt = i.GetPrompt() ?? "";
-
-        // távolítsuk el az "(E)" / "[E]" ismétlést
+        // kiszedi az "(E)" / "[E]" ismétlést
         string pattern = $@"\s*(\(|\[)\s*{Regex.Escape(key)}\s*(\)|\])|\s+\b{Regex.Escape(key)}\b";
         string cleaned = Regex.Replace(basePrompt, pattern, "", RegexOptions.IgnoreCase).Trim();
-
         return $"[{key}] {cleaned}";
     }
 
