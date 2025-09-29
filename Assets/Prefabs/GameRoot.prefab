@@ -174,7 +174,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 8690478550272074833, guid: d32f3de7183abe741b099e5fdbd83d6f, type: 3}
+  m_Sprite: {fileID: 5448717457188727361, guid: e382215c7a766f642a69538e71146689, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -512,7 +512,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 17.000286, y: -0.000005796745}
+  m_AnchoredPosition: {x: 17.000011, y: 0.0000037928594}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &655890319170941775
@@ -6559,7 +6559,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 6274813473469032052, guid: be4b185027290ae468eab5365e3e87fc, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7810,7 +7810,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 455506648200085066}
   m_HandleRect: {fileID: 4535498657276319709}
   m_Direction: 0
-  m_Value: -0.000008611116
+  m_Value: -0.0000005329355
   m_Size: 0
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -8118,6 +8118,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 461e3e666a06073478fd77616feede7c, type: 2}
   - {fileID: 11400000, guid: 5b05f27fe4e2bf94c885ea3e3bbadbfd, type: 2}
   - {fileID: 11400000, guid: 7ece6d1219542d142aca4b41533ec2ab, type: 2}
+  - {fileID: 11400000, guid: 3f4fcd9f12cdc5343a8e4b734f053921, type: 2}
   gridSize: 1
   okColor: {r: 0, g: 1, b: 0, a: 0.4}
   badColor: {r: 1, g: 0, b: 0, a: 0.4}
@@ -8660,7 +8661,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1079725352706048064}
   m_HandleRect: {fileID: 7598557709555751075}
   m_Direction: 0
-  m_Value: -0.000009312347
+  m_Value: 0.9999996
   m_Size: 0
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -9803,6 +9804,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 461e3e666a06073478fd77616feede7c, type: 2}
   - {fileID: 11400000, guid: 5b05f27fe4e2bf94c885ea3e3bbadbfd, type: 2}
   - {fileID: 11400000, guid: 7ece6d1219542d142aca4b41533ec2ab, type: 2}
+  - {fileID: 11400000, guid: 3f4fcd9f12cdc5343a8e4b734f053921, type: 2}
 --- !u!1 &7005892319393696912
 GameObject:
   m_ObjectHideFlags: 0
@@ -10306,7 +10308,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 17.000319, y: 317.00006}
+  m_AnchoredPosition: {x: 17.000013, y: 317.00003}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &7484829865053996380
@@ -10341,7 +10343,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 17.000341, y: 0.000011955772}
+  m_AnchoredPosition: {x: -16.999983, y: 0.00003168442}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &7504745103813285820
@@ -10662,7 +10664,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 336221712135136910}
   m_HandleRect: {fileID: 2607019208868451458}
   m_Direction: 0
-  m_Value: -0.000008975759
+  m_Value: 0
   m_Size: 0
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -12585,7 +12587,6 @@ GameObject:
   - component: {fileID: 2762174328978960346}
   - component: {fileID: 5084293494248119647}
   - component: {fileID: 5012647796265002827}
-  - component: {fileID: 7996990357790161721}
   m_Layer: 9
   m_Name: PlayerSprite
   m_TagString: Untagged
@@ -12685,103 +12686,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!82 &7996990357790161721
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9046512569412149890}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
-  m_PlayOnAwake: 0
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1 &9207332915534386672
 GameObject:
   m_ObjectHideFlags: 0
@@ -14573,10 +14477,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8300000, guid: fe3559a63bc7d4f4fbd48ed5ed2534ac, type: 3}
     - target: {fileID: 2949710408215436048, guid: 506d7001900c4e545bed569f90108b60, type: 3}
-      propertyPath: stepSource
-      value: 
-      objectReference: {fileID: 7996990357790161721}
-    - target: {fileID: 2949710408215436048, guid: 506d7001900c4e545bed569f90108b60, type: 3}
       propertyPath: groundCheck
       value: 
       objectReference: {fileID: 2752098014095946650}
@@ -14740,10 +14640,6 @@ PrefabInstance:
       propertyPath: stepLoop
       value: 
       objectReference: {fileID: 8300000, guid: 69b773af5977e894baf8f19edaa480d9, type: 3}
-    - target: {fileID: 6551420215715453974, guid: 506d7001900c4e545bed569f90108b60, type: 3}
-      propertyPath: stepSource
-      value: 
-      objectReference: {fileID: 7996990357790161721}
     - target: {fileID: 6551420215715453974, guid: 506d7001900c4e545bed569f90108b60, type: 3}
       propertyPath: zgPitchMax
       value: 4

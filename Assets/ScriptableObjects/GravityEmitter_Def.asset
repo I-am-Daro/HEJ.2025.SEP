@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d0c9fbad10c6a1648975cd54ea0648d1, type: 3}
-  m_Name: PipeSegment_Corner
+  m_Name: GravityEmitter_Def
   m_EditorClassIdentifier: 
-  id: Pipe_corner
-  displayName: Corner Pipe
+  id: Building_GravityEmitter
+  displayName: Gravity Emitter
   icon: {fileID: 0}
-  prefab: {fileID: 6599981312941766592, guid: ea3eb1b0b49ba2d4397b24fd30ba8e40, type: 3}
+  prefab: {fileID: 4928066411793897872, guid: 857718307ea88714094ce0851d3817ab, type: 3}
   size: {x: 1, y: 1}
   blockMask:
     serializedVersion: 2
-    m_Bits: 128
-  canRotate: 1
-  forbidNearTagged: 0
+    m_Bits: 640
+  canRotate: 0
+  forbidNearTagged: 1
   nearTag: Spaceship
-  minDistance: 0
-  ironCost: 2
+  minDistance: 5
+  ironCost: 80

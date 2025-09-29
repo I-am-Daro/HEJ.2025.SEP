@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d0c9fbad10c6a1648975cd54ea0648d1, type: 3}
-  m_Name: PipeSegment_Def
+  m_Name: O2Pilon_Def
   m_EditorClassIdentifier: 
-  id: Pipe_horisontal
-  displayName: Horisontal Pipe
+  id: Building_O2Pilon
+  displayName: Oxigen Pilon
   icon: {fileID: 0}
-  prefab: {fileID: 2571914325048733067, guid: 4e38c0b4bef92a1478a8c25fa8091da7, type: 3}
+  prefab: {fileID: 9148587461943832499, guid: bab5ecc927d64ff41998626861219e3a, type: 3}
   size: {x: 1, y: 1}
   blockMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 640
   canRotate: 1
-  forbidNearTagged: 0
+  forbidNearTagged: 1
   nearTag: Spaceship
-  minDistance: 0
+  minDistance: 6
   ironCost: 1
