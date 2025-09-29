@@ -1,10 +1,22 @@
 fileFormatVersion: 2
-guid: eba116054643a574398879509c1507da
+guid: 0997e40ed98714b48a3e6be3ec8aae54
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3096102801339554492
-    second: "Kutyuuu ^^_6_fekv\u0151_0"
+      213: 1432590881484717761
+    second: Astro_walkN_0
+  - first:
+      213: 5768358031488781338
+    second: Astro_walkN_1
+  - first:
+      213: 3201554740742384121
+    second: Astro_walkN_2
+  - first:
+      213: -1768324571499648711
+    second: Astro_walkN_3
+  - first:
+      213: 6534985599867959940
+    second: Astro_walkN_4
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -97,32 +109,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WindowsStoreApps
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
     buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -152,13 +138,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "Kutyuuu ^^_6_fekv\u0151_0"
+      name: Astro_walkN_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 11
         y: 0
-        width: 757
-        height: 604
+        width: 43
+        height: 62
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -167,8 +153,96 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cba9fed081197fa20800000000000000
-      internalID: 3096102801339554492
+      spriteID: 1ce3c5701d591e310800000000000000
+      internalID: 1432590881484717761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Astro_walkN_1
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 0
+        width: 43
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1c092c41135d0050800000000000000
+      internalID: 5768358031488781338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Astro_walkN_2
+      rect:
+        serializedVersion: 2
+        x: 139
+        y: 0
+        width: 42
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f9eaeaf2153e6c20800000000000000
+      internalID: 3201554740742384121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Astro_walkN_3
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 0
+        width: 42
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9392b24db26a577e0800000000000000
+      internalID: -1768324571499648711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Astro_walkN_4
+      rect:
+        serializedVersion: 2
+        x: 268
+        y: 0
+        width: 42
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48a3c6c77cee0ba50800000000000000
+      internalID: 6534985599867959940
       vertices: []
       indices: 
       edges: []
@@ -186,8 +260,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      "Kutyuuu ^^_6_fekv\u0151_0": 3096102801339554492
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
